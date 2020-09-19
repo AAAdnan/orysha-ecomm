@@ -1,12 +1,10 @@
 const path = require('path')
 require('dotenv').config()
 
-console.log(process.env.PGPORT)
-
 module.exports = {
   client: 'pg',
   connection: {
-    host: process.env.PGHOST || 'localhost',
+    host: 'localhost',
     user: process.env.PGUSER || 'adnan',
     port: process.env.PGPORT || '5433',
     password: process.env.PGPASSWORD || 'yasmeen60',
