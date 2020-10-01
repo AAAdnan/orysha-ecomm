@@ -1,45 +1,27 @@
-import { gql, ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { createHttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context'
-import Cookies from 'js-cookie'
-import { useRouter } from 'next/router'
-import ProductInfo  from "../components/Products/ProductInfo";
-import Form  from "../components/Products/Form";
-import PrivateArea from './PrivateArea'
+import React from "react";
+import Head from "next/head";
+import Nav from "../components/nav";
 
-const httpLink = createHttpLink({ uri: 'http://localhost:3000/api/graphql-data' })
+const Home = () => (
+  <div className="text-sans">
+    <Head>
+      <title>Home</title>
+      <link rel="icon" href="/favicon.ico" />
+    </Head>
 
-const authLink = setContext((_, { headers }) => {
-  const token = Cookies.get('token')
+    <div className="w-full text-gray-900">
+      <h1 className="m-0 w-full pt-20 leading-tight text-5xl text-center text-white font-bold">
+        Welcome to Orysha
+      </h1>
+      <p className="text-center text-white my-4 text-m">
+        To get started, edit <code>pages/index.js</code> and save to reload.
+      </p>
 
-  return {
-    headers: {
-      ...headers,
-      authorization: `Bearer ${token}`
-    }
-  }
-})
-
-
-const Home = ({ data }) => {
-  const client = new ApolloClient({
-    link: authLink.concat(httpLink),
-    cache: new InMemoryCache()
-  })
-
-  if(Cookies.get('signin')){
-    router.push('/private-area')
-  }
-  return (
-    <ApolloProvider client={client}>
-      <div>
-        <h1>NextJS GraphQL Apollo App</h1>
-        <Form path="/"/>
-        <ProductInfo />
-        <PrivateArea path="/private-area" />
+      <div className="max-w-4xl text-white mx-auto pt-20 py-auto pb-8 flex flex-row justify-around">
+        <p>Store</p>
       </div>
-    </ApolloProvider>
-  );
-};
+    </div>
+  </div>
+);
 
 export default Home;

@@ -15,11 +15,12 @@ const typeDefs = gql`
         email: String!
     }
     type AuthPayload {
-        token: String
+        token: String!
+        tokenExpiration: Int!
         user: User
     }
     type Basket {
-        id: String!,
+        id: ID!,
         user: User,
         items: [BasketItem],
         quantity: Int,

@@ -21,6 +21,9 @@ const resolvers = {
   Mutation: {
 
     async updateProduct (root, { id, name, description, price, size}, context, info) {
+
+      if (!context.user) return 'not allowed to update a product';
+
       
       const [ updatedProduct ] = await database('products').where( { id } ).update({
         name, description, price, size
@@ -32,17 +35,6 @@ const resolvers = {
     async addProduct(root, { name, description, price, size}, context, info) {
 
       if (!context.user) return 'not allowed to create product';
-
-      // match context.user.id, go through each mutation and add the verification user.id
-      // creating cart
-      // integrate next app with API, set up apollo client
-      // how to pass authorisation header into apollo client
-      // read about authorisation bearer tokens, apollo client, apollo server, authorisation versus authentication
-      // hardcode login/sign up operation, get jwt token back , put token into cookie, use cookie to create a product
-      // check if cookie have token in them - hydrating token in the app state from the cookies
-      // request login/sign up, in next app store the token using javascript cookie
-      // read from javascript Cookies, when requesting
-      // using Cookies, to give next app access to them whilst server rendering
 
       if(context.user) {
 
@@ -60,6 +52,8 @@ const resolvers = {
 
     async deleteProduct(root, { id }, context, info){
 
+      if (!context.user) return 'not allowed to delete products';
+
       await database('products').where( { id } ).del()
 
       console.log('Success')
@@ -67,6 +61,8 @@ const resolvers = {
     },
 
     async createBasket(root, args, context){
+
+      if (!context.user) return 'not allowed to create baskets';
 
         const [ createBasket ] = await database('basket_table').insert( { user_id : context.user && context.user.id} , [
           'id'
@@ -82,7 +78,7 @@ const resolvers = {
       const [ user ] = await database('user_table').insert({ name, email, password: passwordHashed}, [
         'name', 'email', 'password', 'id'])
 
-      const token = jwt.sign( { userId: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1y'})
+      const token = jwt.sign( { userId: user.id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h'})
 
       return {
         token,
@@ -91,6 +87,8 @@ const resolvers = {
     },
 
     async login(_, { email, password, }) {
+
+    
       // 1
       const [ user ] = await database('user_table').where( { email })
 
@@ -106,35 +104,40 @@ const resolvers = {
         throw new Error('Invalid password')
       }
     
-      const token = jwt.sign({ userId: user.id }, process.env.ACCESS_TOKEN_SECRET )
+      const token = jwt.sign({ userId: user.id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h'} )
     
       // 3
       return {
         token,
+        tokenExpiration: 1,
         user,
       }
     }
   },
 }
 
-// const context = ({ req }) => {
-//   const token = req.headers.authorization || ''
+const getUserId = (token) => {
 
-//   try {
-//     const { id, email } = jwt.verify(token.replace('Bearer ', ''), ACCESS_TOKEN_SECRET)
+  try{
+    const tokenNew = token.replace('Bearer ', '')
+    const { userId } = jwt.verify(tokenNew, process.env.ACCESS_TOKEN_SECRET)
+  
+    return userId
+  }
+  catch(e){
+    console.log(e.stack)
 
-//     return { user: { id, email }}
-
-//   } catch (e) {
-//     return { user: null };
-//   }
-// }
-
+    return null;
+  }
+ 
+}
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req }) => {
+
+  
     const token = req.headers.authorization || '';
 
     if(token){
@@ -147,15 +150,6 @@ const server = new ApolloServer({
 
   }
 });
-
-const getUserId = (token) => {
-
-  const tokenNew = token.replace('Bearer', '')
-  const { userId } = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-
-  return userId
-}
-
 
 
 const handler = server.createHandler({ path: "/api/graphql" });
