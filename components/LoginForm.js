@@ -4,6 +4,8 @@ import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/react-hooks'
 import { gql, HttpLink } from 'apollo-boost'
 import { setContext } from '@apollo/client/link/context';
+import { parseCookies, setCookie, destroyCookie } from 'nookies'
+import Router from 'next/router'
 
 
 const login_mutation = gql `
@@ -17,17 +19,7 @@ const login_mutation = gql `
 const httpLink = new HttpLink({ uri: 'http://localhost:3000/graphql' })
 
 
-// put response into localStorage
-// put token into cookie
-// app.js put headers as apollo-link
-// update ApolloClient in memory to use as a bearer token
-// pass headers in a context object when client is used
-// set link function to hold http headers 
-
-//replace localStorage with jscookie
-
-
-const LoginForm = () => {
+const LoginForm = ({ loggedIn, ...props }) => {
 
   const apolloClient = useApolloClient()
 
@@ -40,7 +32,14 @@ const LoginForm = () => {
   let inMemoryToken;
 
   const submitForm = async (event) => {
-    event.preventDefault()
+
+   event.preventDefault()
+
+   const cookies = parseCookies()
+
+   console.log({ cookies })
+
+   
 
    const data = await apolloClient.mutate(
       {
@@ -53,7 +52,12 @@ const LoginForm = () => {
 
     inMemoryToken = data.data.login.token
 
-    localStorage.setItem('authToken', inMemoryToken)
+  setCookie(inMemoryToken, 'fromClient', 'token', {
+    maxAge: 30 * 24 * 60 * 60,
+    path: '/',
+  })
+
+  localStorage.setItem('authToken', inMemoryToken)
 
   setContext((_, { headers }) => {
     return {
@@ -63,16 +67,20 @@ const LoginForm = () => {
       }
     }
   });
+
+  if (inMemoryToken){
+    Router.push('/')
+  }
+
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
       <div>
-       
         <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={submitForm}>
         <h2 className="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
-          Sign in to your account
+          Login
         </h2>
           <div className="mt-6 rounded-md shadow-sm">
             <div>
@@ -97,6 +105,21 @@ const LoginForm = () => {
       </div>
     </div>
   )
+}
+
+LoginForm.getInitialProps = async ctx => {
+
+  const cookies = parseCookies(ctx)
+
+  console.log(cookies)
+  
+    // Destroy
+    // destroyCookie(ctx, 'cookieName')
+
+  if(!cookies) return { loggedIn: false }
+
+  if(cookies) return { loggedIn: true}
+  
 }
 
 export default LoginForm;

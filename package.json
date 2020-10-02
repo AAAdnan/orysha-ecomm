@@ -34,9 +34,11 @@
     "next": "9.5.2",
     "next-with-apollo": "^5.1.0",
     "node-sass": "^4.14.1",
+    "nookies": "^2.4.0",
     "pg": "^8.3.2",
     "react": "16.13.1",
     "react-apollo": "^3.1.5",
+    "react-cookie": "^4.0.3",
     "react-dom": "16.13.1",
     "run.env": "^1.1.0",
     "uuid": "^8.3.0"

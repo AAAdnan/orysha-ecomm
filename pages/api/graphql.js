@@ -78,7 +78,7 @@ const resolvers = {
       const [ user ] = await database('user_table').insert({ name, email, password: passwordHashed}, [
         'name', 'email', 'password', 'id'])
 
-      const token = jwt.sign( { userId: user.id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h'})
+      const token = jwt.sign( { userId: user.id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d'})
 
       return {
         token,
@@ -104,7 +104,7 @@ const resolvers = {
         throw new Error('Invalid password')
       }
     
-      const token = jwt.sign({ userId: user.id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h'} )
+      const token = jwt.sign({ userId: user.id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d'} )
     
       // 3
       return {
