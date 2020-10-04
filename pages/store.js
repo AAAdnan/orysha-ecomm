@@ -37,7 +37,7 @@ const ProductItem = props => (
       <div className="flex item-center justify-between mt-3">
         <h1 className="text-black font-bold text-xl">£{ props.price }</h1>
         <h1 className="text-black font-bold text-xl">Size: { props.size }</h1>
-        <button className="px-3 py-2 bg-white text-white text-xs font-bold uppercase rounded">Add to Cart</button>
+        <button className="px-3 py-2 bg-black text-yellow-600 text-xs font-bold uppercase rounded">Add to Cart</button>
       </div>
     </div>
     </div>
@@ -55,9 +55,18 @@ const ProductList = () => {
         return <div>Error!</div>;
     }
     
-   return data.allProducts.map(( { name, description, price, size   }) => (
-      <ProductItem name={name} description={description} price={price} size={size} />
-   ))
+   return (
+       <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                { data.allProducts.map(( { name, description, price, size   }) => (
+                    <ProductItem name={name} description={description} price={price} size={size} />
+            
+                    )) }
+            </div>
+        </div>
+   )
+   
+  
 
 }
 

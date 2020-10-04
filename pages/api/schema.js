@@ -31,7 +31,7 @@ const typeDefs = gql`
         quantity: Int 
     }
     type Query {
-        allProducts(last: Int): [Product]
+        allProducts(first: Int): [Product]
         users: [User]
     }
     type Mutation {

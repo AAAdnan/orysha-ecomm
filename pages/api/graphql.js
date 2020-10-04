@@ -8,7 +8,7 @@ const typeDefs = require('../../pages/api/schema');
 
 const resolvers = {
   Query: {
-    allProducts: async () => {
+    allProducts: async (parent, args, context, info) => {
       const products = await database.select().from('products')
       return products
     },
