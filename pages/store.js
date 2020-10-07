@@ -1,6 +1,24 @@
 import Layout from "../components/Layout";
+import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import { gql, HttpLink } from 'apollo-boost'
 import { useQuery } from '@apollo/react-hooks';
+import Nav from '../components/Nav';
+import Head from "next/head";
+
+export const getServerSideProps = async ctx => {
+
+  const cookies = parseCookies(ctx)
+
+  console.log(cookies)
+  
+    // Destroy
+    // destroyCookie(ctx, 'cookieName')
+
+  if(!cookies) return { props: { loggedIn: false } }
+
+  if(cookies) return { props: { loggedIn: true } }
+  
+}
 
 const GET_PRODUCTS = gql`
     query{
@@ -9,6 +27,11 @@ const GET_PRODUCTS = gql`
         }
     }
 `
+
+// store in the query parameter 
+// pass to graphql query
+
+
 const ProductItem = props => (
     <div className="py-6">
     <div className="flex max-w-md bg-white rounded overflow-hidden shadow-lg">
@@ -44,7 +67,7 @@ const ProductItem = props => (
     </div>
   );
 
-const ProductList = () => {
+const ProductList = (props) => {
     const { loading, error, data } = useQuery(GET_PRODUCTS);
 
     if(loading) {
@@ -56,6 +79,12 @@ const ProductList = () => {
     }
     
    return (
+     <>
+     <Head>
+      <title>Store</title>
+      <link rel="icon" href="/orysha_template.jpg" />
+    </Head>
+     <Nav loggedIn={props.loggedIn} />
        <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 { data.allProducts.map(( { name, description, price, size   }) => (
@@ -64,9 +93,9 @@ const ProductList = () => {
                     )) }
             </div>
         </div>
+      </>
    )
    
-  
 
 }
 

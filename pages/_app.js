@@ -32,7 +32,6 @@ function MyApp({ Component, pageProps }) {
   return (
   <ApolloProvider client={client}>
     <div className="h-screen">
-    <Nav />
     <main className="flex-1">
       <Component {...pageProps} />
     </main>

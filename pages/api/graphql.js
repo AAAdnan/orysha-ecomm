@@ -6,6 +6,12 @@ import database from '../../database/knex';
 const typeDefs = require('../../pages/api/schema');
 
 
+//limit, offset pagination
+//product as a total count
+//infinite scroll
+//apollo graphql pagination  - fetchmore variable
+
+
 const resolvers = {
   Query: {
     allProducts: async (parent, args, context, info) => {
