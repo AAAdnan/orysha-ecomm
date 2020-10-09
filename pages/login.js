@@ -1,5 +1,4 @@
 import React from 'react';
-import Layout from "../components/Layout";
 import { gql, ApolloClient, useApolloClient, useMutation } from '@apollo/client';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import LoginForm from '../components/LoginForm';

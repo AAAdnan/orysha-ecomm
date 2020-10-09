@@ -31,7 +31,8 @@ const typeDefs = gql`
         quantity: Int 
     }
     type Query {
-        allProducts(first: Int): [Product]
+        products(limit: Int, offset: Int): [Product]
+        product(name: String!): Product
         users: [User]
     }
     type Mutation {

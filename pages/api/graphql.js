@@ -10,13 +10,15 @@ const typeDefs = require('../../pages/api/schema');
 //product as a total count
 //infinite scroll
 //apollo graphql pagination  - fetchmore variable
+//
 
-
+ 
 const resolvers = {
   Query: {
-    allProducts: async (parent, args, context, info) => {
-      const products = await database.select().from('products')
-      return products
+    products: async (parent, { limit = 20, offset }, context, info) => {
+      const products = await database.select().from('products').orderBy('price').limit(limit).offset(offset)
+
+      return products;
     },
     users: async () => {
       const users = await database.select().from('user_table')
