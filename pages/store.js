@@ -9,9 +9,6 @@ export const getServerSideProps = async ctx => {
   const cookies = parseCookies(ctx)
 
   console.log(cookies)
-  
-    // Destroy
-    // destroyCookie(ctx, 'cookieName')
 
   if(!cookies) return { props: { loggedIn: false } }
 
@@ -26,11 +23,6 @@ const PRODUCTS_QUERY = gql`
         }
     }
 `
-
-
-// store in the query parameter 
-// pass to graphql query
-
 
 const ProductItem = props => (
     <div className="py-6">
@@ -68,9 +60,11 @@ const ProductItem = props => (
   );
 
 const ProductList = (props) => {
-    const { loading, error, data, fetchMore } = useQuery(PRODUCTS_QUERY, { variables: { limit: 2, offset:10 } } );
+    const { loading, error, data, fetchMore } = useQuery(PRODUCTS_QUERY, { variables: { limit: 4, offset:0 } } );
 
-    console.log(data)
+    let current = data.products.length;
+
+    console.log(current)
 
     if(loading) {
         return <div>Loading</div>
@@ -95,13 +89,37 @@ const ProductList = (props) => {
                     )) }
             </div>
         </div>
-        <button  className="group relative flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
-        More
-        </button>
-      </>
-   )
+        <button onClick={ () => 
+          fetchMore({
+            variables: { offset: current },
+            updateQuery: (prev, { fetchMoreResult }) => {
+              if (!fetchMoreResult) {
+                return prev;
+              }
+              return Object.assign({}, prev, {
+                products: [...prev.products, ...fetchMoreResult.products]
+              });
+            }
+          })
+        } className="group relative flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">Load More</button>
+        </>
+        )
+     }
    
-
-}
-
 export default ProductList;
+
+//   <button 
+//   onClick={() => {
+//     fetchMore({ 
+//       variables: { limit: current + 2 }, 
+//       updateQuery: (prev, { fetchMoreResult }) => {
+//     if (!fetchMoreResult) {
+//       return prev;
+//     }
+//     return Object.assign(prev, fetchMoreResult);
+//   }
+//   })
+// }}
+//   className="group relative flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
+//   Load More
+//   </button>
