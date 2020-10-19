@@ -9,6 +9,18 @@ const typeDefs = gql`
         size: String,
         user: User
     }
+    type ProductEdge {
+        node: Product!
+    }
+    type ProductConnection {
+        edges: [ProductEdge]!
+        pageInfo: PageInfo!
+    }
+    type PageInfo {
+        endCursor: String!,
+        hasNextPage: Boolean!
+        startCursor: ID!
+    }
     type User {
         id: ID!
         name: String!,
@@ -31,7 +43,7 @@ const typeDefs = gql`
         quantity: Int 
     }
     type Query {
-        products(limit: Int, offset: Int): [Product]
+        products(pageSize: Int, cursor: String ): ProductConnection!
         product(name: String!): Product
         users: [User]
     }

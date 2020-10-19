@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 import database from '../../database/knex';
 const typeDefs = require('../../pages/api/schema');
+import  { toCursorHash, fromCursorHash } from './cursorHash'
 
 
 //limit, offset pagination
@@ -15,10 +16,37 @@ const typeDefs = require('../../pages/api/schema');
  
 const resolvers = {
   Query: {
-    products: async (parent, { limit = 20, offset }, context, info) => {
-      const products = await database.select().from('products').orderBy('price').limit(limit).offset(offset)
+    //   // take limit, offset for next page and encrypt - return as token
+    //   // replace limit and offset with pageSize
+    //   // select from products where id > cursor with limit + 1 
+    //   // only return the number of products as per the limit, limit + 1  => item.id == cursor
+    //   // order by ID
+    products: async(parent, { pageSize = 2, cursor }) => {
 
-      return products;
+      let decodedCursor
+
+      if (cursor) {
+       decodedCursor = fromCursorHash(cursor);
+      }
+
+      const products = decodedCursor ? await database.select().from('products').where('id', '>', decodedCursor).limit(pageSize + 1) :
+                       await database.select().from('products').limit(pageSize + 1)
+
+      const hasNextPage = products.length > pageSize;
+      
+      const nodes = hasNextPage ? products.slice(0, -1) : products;
+
+      const edges = nodes.map((node) => {
+        return { node: node}
+      })
+
+      return {
+        edges: edges,
+        pageInfo: {
+          hasNextPage: hasNextPage,
+          endCursor: toCursorHash(nodes[nodes.length - 1].id.toString())
+        }
+      }
     },
     users: async () => {
       const users = await database.select().from('user_table')
@@ -80,6 +108,10 @@ const resolvers = {
     },
 
     async signup( root, { name, email, password }, info) {
+
+      // add role field to database
+      // add to the jwt, check from context
+      // check if user.role === admin/{}
 
       const passwordHashed = await bcrypt.hash(password,10);
 
