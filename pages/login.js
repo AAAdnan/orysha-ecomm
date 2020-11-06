@@ -10,9 +10,6 @@ export const getServerSideProps = async ctx => {
   const cookies = parseCookies(ctx)
 
   console.log(cookies)
-  
-    // Destroy
-    // destroyCookie(ctx, 'cookieName')
 
   if(!cookies) return { props: { loggedIn: false } }
 

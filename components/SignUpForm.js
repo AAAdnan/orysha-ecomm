@@ -3,11 +3,12 @@ import { useApolloClient } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
 import { setContext } from '@apollo/client/link/context';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
+import cookieCutter from 'cookie-cutter'
 import Router from 'next/router'
 
 const signup_mutation = gql `
   mutation($email:String!, $password:String!, $name:String!) {
-    signup(email: $email, password: $password, name: $name,) {
+    signUpUser(email: $email, password: $password, name: $name,) {
       token
     }
   }
@@ -26,11 +27,7 @@ const SignUpForm = ({ loggedIn, ...props }) => {
   const submitForm = async (event) => {
 
    event.preventDefault()
-
-   const cookies = parseCookies()
-
-   console.log({ cookies })
-
+   
    const data = await apolloClient.mutate(
       {
         mutation: signup_mutation, variables : {
@@ -41,14 +38,10 @@ const SignUpForm = ({ loggedIn, ...props }) => {
       }
     )
 
-    console.log(data)
-
     inMemoryToken = data.data.signup.token
 
-  setCookie(inMemoryToken, 'fromClient', 'token', {
-    maxAge: 30 * 24 * 60 * 60,
-    path: '/',
-  })
+
+  cookieCutter.set('token', inMemoryToken)
 
   localStorage.setItem('authToken', inMemoryToken)
 

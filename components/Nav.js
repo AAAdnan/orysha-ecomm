@@ -27,8 +27,7 @@ const Nav = (props) => {
    return  ( 
     <nav className="flex justify-between p-4">
       <div className="flex items-center">
-      <div className="inline-block h-6 w-6 rounded-full bg-gray-400" />
-      <span className="m1-2 text-orange-600">Orysha</span>
+      <span className="m1-2 text-orange-600 font-mono font-bold">ORYSHA</span>
       </div>
       <ul className="flex space-x-2">
         <NavItem text="Home" href="/" />

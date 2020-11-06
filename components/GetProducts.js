@@ -2,25 +2,23 @@ import { useQuery } from '@apollo/react-hooks';
 import { gql, HttpLink } from 'apollo-boost'
 
 const GET_PRODUCTS = gql `
-    query($limit: Int, $cursor: String) {
-      products(limit: $limit, cursor: $cursor) {
+    query($pageSize: Int, $cursor: String) {
+      products(pageSize: $pageSize, cursor: $cursor) {
         edges {
           node {
             name
             description
             price
             size
+            image
           }
         }
         pageInfo {
           endCursor
-          hasNextPage
         }
       }
     }
 `
-
-
 
 function useProducts() {
 
@@ -33,7 +31,6 @@ function useProducts() {
             query: GET_PRODUCTS,
             notifyOnNetworkStatusChange: true,
             variables: {
-                limit: 5,
                 cursor: data.products.pageInfo.endCursor,
             },
             updateQuery: (previousResult, { fetchMoreResult }) => {
@@ -55,7 +52,6 @@ function useProducts() {
 
     return {
         products: data.products.edges.map(({ node }) => node),
-        hasNextPage: data.products.pageInfo.hasNextPage,
         loading,
         loadMore,
       }

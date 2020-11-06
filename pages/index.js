@@ -2,13 +2,25 @@ import React from "react";
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import Head from "next/head";
 import Nav from '../components/Nav';
+import { useQuery, gql } from '@apollo/react-hooks';
+
+const GET_USER = gql `
+   query{
+     me {
+       id,
+       name
+     }
+   }
+`
+
 
 export const getServerSideProps = async ctx => {
 
   const cookies = parseCookies(ctx)
 
+
   console.log(cookies)
-  
+
     // Destroy
     // destroyCookie(ctx, 'cookieName')
 
@@ -19,6 +31,11 @@ export const getServerSideProps = async ctx => {
 }
 
 const Home = (props) => {
+
+  const { data, loading, fetchMore } = useQuery(GET_USER);
+
+  console.log(data)
+
   return(
   <div >
     <Head>
@@ -31,11 +48,12 @@ const Home = (props) => {
           <div><h1 className="font-bold text-6xl text-white leading-tight px-6">Orysha</h1></div>
           <div><h1 className="font-bold text-6xl text-orange-600 leading-tight">Store</h1></div>
       </div>
-      <img class="h-64 w-full object-contain" alt="african-mask" src="/orysha_mask.jpg" />
+      <img className="h-64 w-full object-contain" alt="african-mask" src="/orysha_mask.jpg" />
       <div className="mt-24">
         <button className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
         Be inspired
         </button>
+
       </div>
       </div>
   </div>

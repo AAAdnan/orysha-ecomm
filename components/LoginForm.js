@@ -4,11 +4,12 @@ import { useApolloClient } from '@apollo/react-hooks'
 import { gql, HttpLink } from 'apollo-boost'
 import { setContext } from '@apollo/client/link/context';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
+import cookieCutter from 'cookie-cutter'
 import Router from 'next/router'
 
 const login_mutation = gql `
   mutation($email:String!, $password:String!) {
-    login(email: $email, password: $password) {
+    loginUser(email: $email, password: $password) {
       token
     }
   }
@@ -28,10 +29,6 @@ const LoginForm = ({ loggedIn, ...props }) => {
 
    event.preventDefault()
 
-   const cookies = parseCookies()
-
-   console.log({ cookies })
-
    const data = await apolloClient.mutate(
       {
         mutation: login_mutation, variables : {
@@ -41,23 +38,13 @@ const LoginForm = ({ loggedIn, ...props }) => {
       }
     )
 
-    inMemoryToken = data.data.login.token
+  inMemoryToken = data.data.loginUser.token
 
-  setCookie(inMemoryToken, 'fromClient', 'token', {
-    maxAge: 30 * 24 * 60 * 60,
-    path: '/',
-  })
+  console.log(data.data)
+
+  cookieCutter.set('token', inMemoryToken)
 
   localStorage.setItem('authToken', inMemoryToken)
-
-  setContext((_, { headers }) => {
-    return {
-     headers: {
-        ...headers,
-        Authorization: inMemoryToken ? `Bearer ${inMemoryToken}` : "",
-      }
-    }
-  });
 
   if (inMemoryToken){
     Router.push('/')
@@ -74,10 +61,10 @@ const LoginForm = ({ loggedIn, ...props }) => {
       <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={submitForm}>
         <div className="mt-6 rounded-md shadow-sm">
           <div>
-            <input onChange={event => setEmail(event.target.value)} aria-label="Email address" name="email" type="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Email address"></input>
+            <input onChange={event => setEmail(event.target.value)} aria-label="Email address" name="email" type="email" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Email address"></input>
           </div>
           <div className="-mt-px">
-            <input onChange={event => setPassword(event.target.value)} aria-label="Password" name="password" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Password"></input>
+            <input onChange={event => setPassword(event.target.value)} aria-label="Password" name="password" type="password" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Password"></input>
           </div>
         <div className="mt-6">
           <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">

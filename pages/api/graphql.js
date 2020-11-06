@@ -4,24 +4,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 import database from '../../database/knex';
 const typeDefs = require('../../pages/api/schema');
+import cookieCutter from 'cookie-cutter'
 import  { toCursorHash, fromCursorHash } from './cursorHash'
-
-
-//limit, offset pagination
-//product as a total count
-//infinite scroll
-//apollo graphql pagination  - fetchmore variable
-//
-
  
 const resolvers = {
   Query: {
-    //   // take limit, offset for next page and encrypt - return as token
-    //   // replace limit and offset with pageSize
-    //   // select from products where id > cursor with limit + 1 
-    //   // only return the number of products as per the limit, limit + 1  => item.id == cursor
-    //   // order by ID
-    products: async(parent, { pageSize = 2, cursor }) => {
+    products: async(parent, { pageSize = 2, cursor, name }) => {
 
       let decodedCursor
 
@@ -29,28 +17,50 @@ const resolvers = {
        decodedCursor = fromCursorHash(cursor);
       }
 
-      const products = decodedCursor ? await database.select().from('products').where('id', '>', decodedCursor).limit(pageSize + 1) :
-                       await database.select().from('products').limit(pageSize + 1)
+      const baseQuery = database.select().from('products');
 
-      const hasNextPage = products.length > pageSize;
+      if (decodedCursor) {
+        baseQuery.where('id', '>', decodedCursor)
+      }
+
+      if (name) {
+        baseQuery.where('name', 'like', `%${name}%`)
+      }
       
-      const nodes = hasNextPage ? products.slice(0, -1) : products;
+      const products = await baseQuery.limit(pageSize + 1)
+
+      const nodes = products.slice( 0 , pageSize );
 
       const edges = nodes.map((node) => {
-        return { node: node}
+        return { node }
       })
 
+      const nextProduct = products[pageSize]
+
+      const endCursor = nextProduct ? toCursorHash(nextProduct.id.toString()) : null
+
+
       return {
-        edges: edges,
+        edges,
         pageInfo: {
-          hasNextPage: hasNextPage,
-          endCursor: toCursorHash(nodes[nodes.length - 1].id.toString())
+          endCursor
         }
       }
     },
     users: async () => {
       const users = await database.select().from('user_table')
       return users
+    },
+    me: async( root, { user }, context,info) => {
+
+      if(!user) {
+        throw new Error('You are not authenticated')
+      }
+
+      const id = user.id
+
+      return await database('user_table').where( id )
+
     }
   },
 
@@ -68,7 +78,11 @@ const resolvers = {
       return updatedProduct;
     },
 
-    async addProduct(root, { name, description, price, size}, context, info) {
+    async addProduct(root, { name, description, price, size, image}, context, info) {
+
+      console.log(image)
+
+      console.log(name)
 
       if (!context.user) return 'not allowed to create product';
 
@@ -76,8 +90,8 @@ const resolvers = {
 
         const customer_id = context.user;
 
-        const [ addProduct ] = await database('products').insert({ name, description, price, size, customer_id}, [
-          'name', 'description', 'price', 'size', 'customer_id' , 'id' ])
+        const [ addProduct ] = await database('products').insert({ name, description, price, size, customer_id, image}, [
+          'name', 'description', 'price', 'size', 'customer_id' , 'image', 'id' ])
                   
         return addProduct;
 
@@ -88,15 +102,22 @@ const resolvers = {
 
     async deleteProduct(root, { id }, context, info){
 
-      if (!context.user) return 'not allowed to delete products';
+      if (!context.user || context.user.role === 'buyer') return 'not allowed to delete products';
 
-      await database('products').where( { id } ).del()
+      if(context.user.role === 'admin') {
+       return await database('products').where( { id } ).del()
+      }
+
+      if(context.user.role === 'seller') {
+       return await database('products').where( { id, merchant_id: context.user.userId } ).del()
+        
+      }
 
       console.log('Success')
 
     },
 
-    async createBasket(root, args, context){
+    async createBasket(root, args , context){
 
       if (!context.user) return 'not allowed to create baskets';
 
@@ -107,30 +128,28 @@ const resolvers = {
       return createBasket;
     },
 
-    async signup( root, { name, email, password }, info) {
+    async signUpUser( root, { name, email, password }, info) {
 
-      // add role field to database
-      // add to the jwt, check from context
-      // check if user.role === admin/{}
+      const [ foundUser ] = await database('user_table').where( { email })
+
+      if(foundUser) throw new Error('Email already registered')
 
       const passwordHashed = await bcrypt.hash(password,10);
 
       const [ user ] = await database('user_table').insert({ name, email, password: passwordHashed}, [
-        'name', 'email', 'password', 'id'])
+        'name', 'email', 'password', 'id', 'role'])
 
-      const token = jwt.sign( { userId: user.id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d'})
+      const token = jwt.sign( { userId: user.id, email: user.email, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d'})
 
-      return {
-        token,
-        user
-      }
+      return { userId: user.id, token }
     },
 
-    async login(_, { email, password, }) {
+    async loginUser(_, { email, password, }) {
 
     
       // 1
       const [ user ] = await database('user_table').where( { email })
+
 
       if (!user) {
         throw new Error('No such user found')
@@ -144,25 +163,27 @@ const resolvers = {
         throw new Error('Invalid password')
       }
     
-      const token = jwt.sign({ userId: user.id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d'} )
+      const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d'} )
     
+
+
       // 3
       return {
         token,
         tokenExpiration: 1,
-        user,
       }
     }
   },
 }
 
-const getUserId = (token) => {
+const getUser = (token) => {
 
   try{
     const tokenNew = token.replace('Bearer ', '')
-    const { userId } = jwt.verify(tokenNew, process.env.ACCESS_TOKEN_SECRET)
+
+    const { userId, role } = jwt.verify(tokenNew, process.env.ACCESS_TOKEN_SECRET)
   
-    return userId
+    return { userId, role }
   }
   catch(e){
     console.log(e.stack)
@@ -172,23 +193,24 @@ const getUserId = (token) => {
  
 }
 
+const context = ({ req }) => {
+
+  const token = req.headers.authorization || '';
+
+  if(token) {
+    const user = getUser(token);
+
+    return { user }
+  }
+  else return {}
+
+}
+
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }) => {
-
-  
-    const token = req.headers.authorization || '';
-
-    if(token){
-      const user = getUserId(token);
-
-      return { user };
-
-    }
-    else return {}
-
-  }
+  context
 });
 
 

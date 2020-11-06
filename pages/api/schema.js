@@ -7,6 +7,7 @@ const typeDefs = gql`
         description: String,
         price: String,
         size: String,
+        image: String,
         user: User
     }
     type ProductEdge {
@@ -17,9 +18,7 @@ const typeDefs = gql`
         pageInfo: PageInfo!
     }
     type PageInfo {
-        endCursor: String!,
-        hasNextPage: Boolean!
-        startCursor: ID!
+        endCursor: String,
     }
     type User {
         id: ID!
@@ -29,7 +28,7 @@ const typeDefs = gql`
     type AuthPayload {
         token: String!
         tokenExpiration: Int!
-        user: User
+        userId: ID!
     }
     type Basket {
         id: ID!,
@@ -43,18 +42,20 @@ const typeDefs = gql`
         quantity: Int 
     }
     type Query {
-        products(pageSize: Int, cursor: String ): ProductConnection!
-        product(name: String!): Product
+        products(pageSize: Int, cursor: String, name:String ): ProductConnection!
+        findUser: User
         users: [User]
+        me: User
     }
     type Mutation {
         updateProduct(id: Int!, name: String!, description: String, price: String, size: String): Product
-        addProduct(name: String!, description: String!, price: String!, size: String!): Product
+        addProduct(name: String!, description: String!, price: String!, size: String!, image: String): Product
         deleteProduct(id: Int!): Product
         createBasket: Basket
         #updateQuantity
-        signup (email:String!, password: String!, name: String! ): AuthPayload
-        login (email: String!, password: String! ): AuthPayload
+        signUpUser(email:String!, password: String!, name: String! ): AuthPayload
+        loginUser(email: String!, password: String! ): AuthPayload
+        signOutUser(userId: ID!): Boolean!
     }
 `;
 
