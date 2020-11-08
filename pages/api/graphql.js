@@ -78,20 +78,16 @@ const resolvers = {
       return updatedProduct;
     },
 
-    async addProduct(root, { name, description, price, size, image}, context, info) {
-
-      console.log(image)
-
-      console.log(name)
+    async addProduct(root, { name, description, price, size, image, gender}, context, info) {
 
       if (!context.user) return 'not allowed to create product';
 
       if(context.user) {
 
-        const customer_id = context.user;
+        const customer_id = context.user.userId;
 
-        const [ addProduct ] = await database('products').insert({ name, description, price, size, customer_id, image}, [
-          'name', 'description', 'price', 'size', 'customer_id' , 'image', 'id' ])
+        const [ addProduct ] = await database('products').insert({ name, description, price, size, customer_id, image, gender}, [
+          'name', 'description', 'price', 'size', 'customer_id' , 'image', 'gender' ])
                   
         return addProduct;
 
@@ -162,6 +158,8 @@ const resolvers = {
       if (!valid) {
         throw new Error('Invalid password')
       }
+
+
     
       const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d'} )
     
@@ -198,6 +196,7 @@ const context = ({ req }) => {
   const token = req.headers.authorization || '';
 
   if(token) {
+
     const user = getUser(token);
 
     return { user }

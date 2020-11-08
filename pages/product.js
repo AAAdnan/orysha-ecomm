@@ -22,9 +22,9 @@ export const getServerSideProps = async ctx => {
 
 
 const add_product_mutation = gql `
-mutation($name:String!, $description:String!, $price: String!, $size: String!, $image: String) {
-    addProduct(name: $name, description: $description, price: $price, size: $size, image: $image) {
-        name, description, image
+mutation($name:String!, $description:String!, $price: String!, $size: String!, $image: String!, $gender: String!) {
+    addProduct(name: $name, description: $description, price: $price, size: $size, image: $image, gender: $gender ) {
+        name, description, image, gender
     }
 }`
 
@@ -40,6 +40,11 @@ const addProduct = (props) => {
     const [images, setImages] = useState([]);
     const [image, setUrl] = useState([]);
     const [success, setSuccess ] = useState(false);
+    const [gender, setGender] = useState('M')
+
+    function handleChange(e) {
+      console.log(e.currentTarget.value)
+    }
 
     const beginUpload = tag => {
       const uploadOptions = {
@@ -66,9 +71,14 @@ const addProduct = (props) => {
       fetchPhotos("image", setImages);
     }, [])
 
-
     const submitForm = async (event) => {
         event.preventDefault()
+
+        console.log(event)
+
+        console.log(name)
+        console.log(description)
+        console.log(gender)
 
         const data = await apolloClient.mutate(
             {
@@ -77,16 +87,13 @@ const addProduct = (props) => {
                 description,
                 price,
                 size,
-                image
+                image,
+                gender
               }
             }
           )
 
-          
-
-          setSuccess('success')
-
-        //  Router.reload();
+         Router.reload();
     }
 
     return (
@@ -102,29 +109,29 @@ const addProduct = (props) => {
           <form className="mt-24" onSubmit={submitForm} >
               <h1 className="text-3xl text-center font-bold text-white mb-2">Add Product</h1>
               <div className="flex flex-wrap -mx-3 mb-6">
-              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                  <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-name">
-                  Name
-                  </label>
-                  <input onChange={event => setName(event.target.value)} value={name} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Cap" />
-                  <p className="text-red-500 text-xs italic">Please enter a name</p>
-              </div>
-              <div className="w-full md:w-1/2 px-3">
-                  <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-last-name">
-                  Price
-                  </label>
-                  <input onChange={event => setPrice(event.target.value)} value={price} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Doe" />
-                  <p className="text-red-500 text-xs italic">Please enter a price</p>
-              </div>
+                <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-name">
+                    Name
+                    </label>
+                    <input onChange={event => setName(event.target.value)} value={name} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Cap" />
+                    <p className="text-red-500 text-xs italic">Please enter a name</p>
+                </div>
+                <div className="w-full md:w-1/2 px-3">
+                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-last-name">
+                    Price
+                    </label>
+                    <input onChange={event => setPrice(event.target.value)} value={price} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text" placeholder="Doe" />
+                    <p className="text-red-500 text-xs italic">Please enter a price</p>
+                </div>
               </div>
               <div className="flex flex-wrap -mx-3 mb-6">
-              <div className="w-full px-3">
-                  <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-description">
-                  Description
-                  </label>
-                  <input onChange={event => setDescription(event.target.value)} value={description} class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="description" placeholder="******************" />
-                  <p className="text-gray-600 text-xs italic">Please enter a description</p>
-              </div>
+                <div className="w-full px-3">
+                    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-description">
+                    Description
+                    </label>
+                    <input onChange={event => setDescription(event.target.value)} value={description} class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="description" placeholder="******************" />
+                    <p className="text-gray-600 text-xs italic">Please enter a description</p>
+                </div>
               </div>
               <div className="flex flex-wrap -mx-3 mb-6">
                 <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
@@ -133,6 +140,16 @@ const addProduct = (props) => {
                     </label>
                     <input onChange={event => setSize(event.target.value)} value={size} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Cap" />
                     <p className="text-red-500 text-xs italic">Please enter a size</p>
+                </div>
+                <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
+                    Gender
+                    </label> 
+                    <select onChange={event => setGender(event.target.value)} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" >
+                      <option value="M">M</option>
+                      <option value="F">F</option>
+                    </select>
+                    <p className="text-red-500 text-xs italic">Please enter a gender</p>
                 </div>
               </div>
               <div className="flex flex-wrap -mx-3 mb-6">

@@ -8,6 +8,7 @@ const typeDefs = gql`
         price: String,
         size: String,
         image: String,
+        gender: String,
         user: User
     }
     type ProductEdge {
@@ -49,7 +50,7 @@ const typeDefs = gql`
     }
     type Mutation {
         updateProduct(id: Int!, name: String!, description: String, price: String, size: String): Product
-        addProduct(name: String!, description: String!, price: String!, size: String!, image: String): Product
+        addProduct(name: String!, description: String!, price: String!, size: String!, image: String!, gender: String!): Product
         deleteProduct(id: Int!): Product
         createBasket: Basket
         #updateQuantity
