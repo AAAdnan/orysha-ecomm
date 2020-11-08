@@ -9,7 +9,7 @@ import  { toCursorHash, fromCursorHash } from './cursorHash'
  
 const resolvers = {
   Query: {
-    products: async(parent, { pageSize = 2, cursor, name }) => {
+    products: async(parent, { pageSize = 2, cursor, name, gender }) => {
 
       let decodedCursor
 
@@ -25,6 +25,10 @@ const resolvers = {
 
       if (name) {
         baseQuery.where('name', 'like', `%${name}%`)
+      }
+
+      if (gender) {
+        baseQuery.where('gender', 'like', `%${gender}%`)
       }
       
       const products = await baseQuery.limit(pageSize + 1)

@@ -43,7 +43,7 @@ const typeDefs = gql`
         quantity: Int 
     }
     type Query {
-        products(pageSize: Int, cursor: String, name:String ): ProductConnection!
+        products(pageSize: Int, cursor: String, name:String, gender:String ): ProductConnection!
         findUser: User
         users: [User]
         me: User

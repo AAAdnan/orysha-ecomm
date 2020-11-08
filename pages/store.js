@@ -20,8 +20,8 @@ export const getServerSideProps = async ctx => {
 }
 
 const GET_PRODUCTS = gql `
-    query($pageSize: Int, $cursor: String, $name: String) {
-      products(pageSize: $pageSize, cursor: $cursor, name: $name) {
+    query($pageSize: Int, $cursor: String, $name: String, $gender: String) {
+      products(pageSize: $pageSize, cursor: $cursor, name: $name, gender: $gender) {
         edges {
           node {
             name
@@ -41,7 +41,7 @@ const ProductQuery = (props) => {
 
   const router = useRouter();
 
-  const { data, error, loading, fetchMore } = useQuery(GET_PRODUCTS, { variables: { name: router.query.name }} );
+  const { data, error, loading, fetchMore } = useQuery(GET_PRODUCTS, { variables: { name: router.query.name, gender: router.query.gender }} );
 
   const isPageBottom = usePageBottom();
 
@@ -115,9 +115,9 @@ const ProductList = (props) => {
             SHOP
           </h1>
         </div>
-        <div className="flex justify-around">
-          <button className="bg-orange-400 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded text-2xl">Men's Outerwear</button>
-          <button className="bg-orange-400 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded text-2xl">Ladies Outerwear</button>
+        <div className="flex justify-around" onClick={(event) => router.push(`/store?gender=${event.target.value}`)}>
+          <button value="M" className="bg-orange-400 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded text-2xl" >Gentlemen</button>
+          <button value="F" className="bg-orange-400 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded text-2xl">Ladies </button>
         </div>
       </div>
       <div className="container rounded bg-orange-300 mx-auto my-12 p-12">
