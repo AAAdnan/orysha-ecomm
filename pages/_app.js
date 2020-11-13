@@ -4,7 +4,12 @@ import { ApolloProvider } from '@apollo/client';
 // import { AuthProvider } from '../components/AuthProvider'
 import { setContext } from '@apollo/client/link/context';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
+import cookieCutter from 'cookie-cutter'
 import Nav from '../components/Nav';
+import '@fortawesome/fontawesome-free/js/fontawesome';
+import '@fortawesome/fontawesome-free/js/solid';
+import '@fortawesome/fontawesome-free/js/regular';
+import '@fortawesome/fontawesome-free/js/brands';
 
 const httpLink = new HttpLink({
   uri: 'http://localhost:3000/api/graphql',
@@ -12,9 +17,11 @@ const httpLink = new HttpLink({
 
 let token;
 
+//cookies server-side and client
+
 const authLink = setContext((_, { headers }) => {
   if (typeof window !=='undefined') {
-      token = localStorage.getItem('authToken');
+      token = cookieCutter.get('token');
   }
   return {
     headers: {

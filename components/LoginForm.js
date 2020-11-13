@@ -40,11 +40,7 @@ const LoginForm = ({ loggedIn, ...props }) => {
 
   inMemoryToken = data.data.loginUser.token
 
-  console.log(data.data)
-
   cookieCutter.set('token', inMemoryToken)
-
-  localStorage.setItem('authToken', inMemoryToken)
 
   if (inMemoryToken){
     Router.push('/')

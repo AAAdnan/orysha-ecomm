@@ -39,27 +39,34 @@ useEffect(() => {
 
   console.log('this is the bottom')
 
-}, [isPageBottom])
+}, [isPageBottom, data])
 
 let products;
 
 if(data) {
-  console.log(products)
   products = data.products.edges.map( ( { node }) => node)
+  console.log(products)
 } 
 else {
   products = []
 }
 
+
 const click = () => {
+
+  console.log('click')
 
   const endCursor = data.products.pageInfo.endCursor;
 
   fetchMore({
   variables: { cursor: endCursor },
   updateQuery: (previousResult, { fetchMoreResult }) => {
+    console.log(fetchMoreResult)
     const newEdges = fetchMoreResult.products.edges;
     const pageInfo = fetchMoreResult.products.pageInfo;
+
+    console.log(newEdges)
+
 
     return newEdges.length ? {
       products: {
@@ -76,18 +83,15 @@ const click = () => {
 
 
 return (
-   <ProductList click={click} products={ products } 
+   <ProductList products={ products } 
    />
   )
 }
 
-const ProductList = ( { products, click }) => (
-
-
+const ProductList = ( { products }) => (
   <div>
     <h2>Product list</h2>
     {products.map(item => <li className="text-white">{ item.name }</li>)}
-    <button className="text-white" onClick={ click }>Click me</button>
   </div>
 )
 

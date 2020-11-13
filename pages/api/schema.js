@@ -35,12 +35,12 @@ const typeDefs = gql`
         id: ID!,
         user: User,
         items: [BasketItem],
-        quantity: Int,
-        displayPrice: Int
+        cost: Int
     }
     type BasketItem {
         product: Product,
         quantity: Int 
+        price: Int
     }
     type Query {
         products(pageSize: Int, cursor: String, name:String, gender:String ): ProductConnection!
@@ -52,11 +52,9 @@ const typeDefs = gql`
         updateProduct(id: Int!, name: String!, description: String, price: String, size: String): Product
         addProduct(name: String!, description: String!, price: String!, size: String!, image: String!, gender: String!): Product
         deleteProduct(id: Int!): Product
-        createBasket: Basket
-        #updateQuantity
+        addItemToBasket: Basket
         signUpUser(email:String!, password: String!, name: String! ): AuthPayload
         loginUser(email: String!, password: String! ): AuthPayload
-        signOutUser(userId: ID!): Boolean!
     }
 `;
 
