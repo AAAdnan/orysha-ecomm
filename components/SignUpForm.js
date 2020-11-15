@@ -3,7 +3,6 @@ import { useApolloClient } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
 import { setContext } from '@apollo/client/link/context';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
-import cookieCutter from 'cookie-cutter'
 import Router from 'next/router'
 
 const signup_mutation = gql `
@@ -22,6 +21,8 @@ const SignUpForm = ({ loggedIn, ...props }) => {
   const [name, setName ] = useState('')
   const [login, setLogin] = useState('true')
 
+  const cookies = parseCookies();
+
   let inMemoryToken;
 
   const submitForm = async (event) => {
@@ -38,10 +39,11 @@ const SignUpForm = ({ loggedIn, ...props }) => {
       }
     )
 
-    inMemoryToken = data.data.signup.token
+  inMemoryToken = data.data.signUpUser.token
 
-
-  cookieCutter.set('token', inMemoryToken)
+  setCookie({}, 'token', inMemoryToken, {
+    maxAge: 30 * 24 * 60 * 60
+  } )
 
   localStorage.setItem('authToken', inMemoryToken)
 
@@ -68,9 +70,9 @@ const SignUpForm = ({ loggedIn, ...props }) => {
       <div className="w-1/2 text-center">
       <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={submitForm}>
         <div className="mt-6 rounded-md shadow-sm">
-        ` <div>
+          <div>
             <input onChange={event => setName(event.target.value)} aria-label="Name" name="name" type="name" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Name"></input>
-          </div>`
+          </div>
           <div>
             <input onChange={event => setEmail(event.target.value)} aria-label="Email address" name="email" type="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Email address"></input>
           </div>

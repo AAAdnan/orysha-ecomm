@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { setContext } from '@apollo/client/link/context';
-import logout from './Logout';
+import dynamic from 'next/dynamic'
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
+
+// const logout = dynamic(import("../components/Logout"));
+import logout from '../components/Logout';
 
 setContext((_, { headers }) => {
   return {
@@ -43,12 +46,14 @@ const Nav = (props, {fixed }) => {
             id="example-navbar-danger"
           >
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
+                <Link className="text-white" href="/store">store</Link>
                 <NavItem text="HOME" href="/" font="fas fa-home text-lg leading-lg text-white opacity-75"/>
-                { !props.loggedIn && <NavItem text="LOGIN" href="/login" font="fas fa-sign-in text-lg leading-lg text-white opacity-75"/> } 
-                { !props.loggedIn && <NavItem text="REGISTER" href="/signup" font="far fa-sign-in text-lg leading-lg text-white opacity-75"/> }
+                { !props.loggedIn && <NavItem text="LOGIN" href="/login" font="fa fa-id-badge leading-lg text-white opacity-75"/> } 
+                { !props.loggedIn && <NavItem text="REGISTER" href="/signup" font="fa fa-id-badge leading-lg text-white opacity-75"/> }
                 <NavItem text="PRODUCT" href="/product " font="fab fa-product-hunt text-lg leading-lg text-white opacity-75"/>
                 <NavItem text="STORE" href="/store " font="fas fa-store text-lg leading-lg text-white opacity-75"/>
-                { props.loggedIn && <NavItem text="SIGN OUT" href="/signup" font="fas fa-door-open text-lg leading-lg text-white opacity-75"/> }
+                <NavItem text="CART" href="/cart " font="fas fa-shopping-cart text-lg leading-lg text-white opacity-75"/>
+                { props.loggedIn && <NavItem text="SIGN OUT" href="/" onClick={() => logout} font="fas fa-door-open text-lg leading-lg text-white opacity-75"/> }
             </ul>
           </div>
         </div>
@@ -59,13 +64,15 @@ const Nav = (props, {fixed }) => {
 
 
 const NavItem = props => (
-  <li>
-    <a href={props.href}
-       className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-    >
-    <i className={props.font}></i><span className="ml-2 text-white">{props.text}</span>
-    </a>
-  </li>
+  <Link href={props.href}>
+    <li>
+      <a onClick={props.onClick}
+        className="px-3 py-2 flex items-center cursor-pointer text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+      >
+      <i className={props.font}></i><span className="ml-2 text-white">{props.text}</span>
+      </a>
+    </li>
+  </Link>
 );
 
  

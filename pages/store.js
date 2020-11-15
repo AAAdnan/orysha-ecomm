@@ -39,15 +39,6 @@ const GET_PRODUCTS = gql `
     }
 `
 
-const create_basket_mutation = gql `
-  mutation{
-    createBasket{
-      id
-    }
-  }
-
-`
-
 const add_item_to_basket_mutation = gql `
   mutation {
     addItemToBasket{
@@ -58,23 +49,11 @@ const add_item_to_basket_mutation = gql `
 
 const ProductQuery = (props) => {
 
+  const isPageBottom = usePageBottom();
+
   const router = useRouter();
 
   const { data, error, loading, fetchMore } = useQuery(GET_PRODUCTS, { variables: { name: router.query.name, gender: router.query.gender }} );
-
-  console.log(data);
-
-  const isPageBottom = usePageBottom();
-
-  useEffect(() => {
-    if (!isPageBottom || !data ) return;
-  
-    click()
-  
-    console.log('this is the bottom')
-  
-  }, [isPageBottom, fetchMore, data ])
-
 
   let products;
 
@@ -83,32 +62,30 @@ const ProductQuery = (props) => {
   } else {
     products = []
   }
-  
-  const click = () => {
 
-    console.log('click')
-  
-    const endCursor = data.products.pageInfo.endCursor;
-  
-    fetchMore({
-    variables: { cursor: endCursor, name: router.query.name },
-    updateQuery: (previousResult, { fetchMoreResult }) => {
-      const newEdges = fetchMoreResult.products.edges;
-      const pageInfo = fetchMoreResult.products.pageInfo;
-  
-      return newEdges.length ? {
-        products: {
-          __typename: previousResult.products.__typename,
-          edges: [...previousResult.products.edges, ...newEdges],
-          pageInfo,
-        },
-      }
-      : previousResult
-    }
-  })
-  
-  }
+  useEffect(() => {
+    if (!isPageBottom || !data ) return;
 
+    console.log('this is the bottom')
+
+    // fetchMore({
+    //   variables: { cursor: endCursor, name: router.query.name },
+    //   updateQuery: (previousResult, { fetchMoreResult }) => {
+    //     const newEdges = fetchMoreResult.products.edges;
+    //     const pageInfo = fetchMoreResult.products.pageInfo;
+    
+    //     return newEdges.length ? {
+    //       products: {
+    //         __typename: previousResult.products.__typename,
+    //         edges: [...previousResult.products.edges, ...newEdges],
+    //         pageInfo,
+    //       },
+    //     }
+    //     : previousResult
+    //   }
+    // })
+    
+  }, [isPageBottom])
 
   return (
     <ProductList loggedIn={props.loggedIn} products={ products } />
@@ -129,22 +106,22 @@ const ProductList = (props) => {
      <link rel="icon" href="/orysha_template.jpg" />
     </Head>
     <Nav loggedIn={props.loggedIn} />
-      <div class="flex-col">
+      <div className="flex-col">
         <div className="flex justify-center">
-          <h1 class="text-6xl text-orange-600 font-mono font-bold leading-normal mt-0 mb-2 ">
+          <h1 className="text-6xl text-orange-600 font-mono font-bold leading-normal mt-0 mb-2 ">
             SHOP
           </h1>
         </div>
         <div className="flex justify-around" onClick={(event) => router.push(`/store?gender=${event.target.value}`)}>
-          <button value="M" className="bg-orange-400 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded text-2xl" >Gentlemen</button>
-          <button value="F" className="bg-orange-400 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded text-2xl">Ladies </button>
+          <button value="M" className="bg-orange-400 hover:bg-orange-700 text-black font-bold py-2 px-4 rounded text-2xl" >M</button>
+          <button value="F" className="bg-orange-400 hover:bg-orange-700 text-black font-bold py-2 px-4 rounded text-2xl">W </button>
         </div>
       </div>
       <div className="container rounded bg-orange-300 mx-auto my-12 p-12">
         <div className="flex flex-col items-center">
-        <input onChange={(event) => router.push(`/store?name=${event.target.value}`)}  class="w-full h-16 px-3 rounded mb-8 focus:outline-none focus:shadow-outline text-xl px-8 shadow-lg" type="search" placeholder="Search Product" />
+        <input onChange={(event) => router.push(`/store?name=${event.target.value}`)}  className="w-full h-16 px-3 rounded mb-8 focus:outline-none focus:shadow-outline text-xl px-8 shadow-lg" type="search" placeholder="Search Product" />
           {  products.map(( { id, name, description, price, size, image }) => (
-            <ProductItem name={name} id={id} description={description} price={price} size={size} image={image} />))
+            <ProductItem key={id} name={name} id={id} description={description} price={price} size={size} image={image} />))
           }
                 
           </div>      
@@ -178,7 +155,7 @@ const ProductItem = props => {
     <div className="py-6">
       <div className="flex max-w-2xl h-64 border-solid border-4 border-gray-600 bg-white rounded overflow-hidden shadow-lg">
         <div className="w-1/3 p-8">
-          <img class="w-full object-cover" src={props.image}></img>
+          <img className="w-full object-cover" src={props.image}></img>
         </div>
         <div className="w-1/3 p-8">
             <h1 className="text-black font-mono font-bold text-2xl">{ props.name }</h1>

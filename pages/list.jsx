@@ -25,7 +25,6 @@ const GET_PRODUCTS = gql `
     }
 `
 
-
 const ProductQuery = () => {
 
 const { data, error, loading, fetchMore } = useQuery(GET_PRODUCTS)
@@ -35,52 +34,42 @@ const isPageBottom = usePageBottom();
 useEffect(() => {
   if (!isPageBottom || !data ) return;
 
-  click()
+  const endCursor = data.products.pageInfo.endCursor;
+
+  fetchMore({
+    variables: { cursor: endCursor },
+    updateQuery: ( previousResult, { fetchMoreResult }) => {
+
+      const newEdges = fetchMoreResult.products.edges;
+      const pageInfo = fetchMoreResult.products.pageInfo;
+  
+      console.log(newEdges)
+
+      console.log(endCursor)
+  
+  
+      return newEdges.length ? {
+        products: {
+          __typename: previousResult.products.__typename,
+          edges: [...previousResult.products.edges, ...newEdges],
+          pageInfo,
+        },
+      }
+      : previousResult
+    }
+  })
 
   console.log('this is the bottom')
 
-}, [isPageBottom, data])
+}, [isPageBottom, data, fetchMore])
 
 let products;
 
 if(data) {
-  products = data.products.edges.map( ( { node }) => node)
-  console.log(products)
-} 
+  products = data.products.edges.map( ( { node }) => node)} 
 else {
   products = []
 }
-
-
-const click = () => {
-
-  console.log('click')
-
-  const endCursor = data.products.pageInfo.endCursor;
-
-  fetchMore({
-  variables: { cursor: endCursor },
-  updateQuery: (previousResult, { fetchMoreResult }) => {
-    console.log(fetchMoreResult)
-    const newEdges = fetchMoreResult.products.edges;
-    const pageInfo = fetchMoreResult.products.pageInfo;
-
-    console.log(newEdges)
-
-
-    return newEdges.length ? {
-      products: {
-        __typename: previousResult.products.__typename,
-        edges: [...previousResult.products.edges, ...newEdges],
-        pageInfo,
-      },
-    }
-    : previousResult
-  }
-})
-
-}
-
 
 return (
    <ProductList products={ products } 

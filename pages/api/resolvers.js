@@ -10,6 +10,8 @@ const resolvers = {
       products: async(parent, { pageSize = 2, cursor, name, gender }) => {
   
         let decodedCursor
+
+        console.log(decodedCursor)
   
         if (cursor) {
          decodedCursor = fromCursorHash(cursor);
@@ -31,7 +33,7 @@ const resolvers = {
         
         const products = await baseQuery.limit(pageSize + 1)
   
-        console.log(products);
+        console.log('products +' + products);
   
         const nodes = products.slice( 0 , pageSize );
   
@@ -204,3 +206,5 @@ const resolvers = {
       },
     },
   }
+
+module.exports = resolvers;

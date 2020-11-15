@@ -38,6 +38,8 @@ const LoginForm = ({ loggedIn, ...props }) => {
       }
     )
 
+    console.log(data)
+
   inMemoryToken = data.data.loginUser.token
 
   cookieCutter.set('token', inMemoryToken)

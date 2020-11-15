@@ -4,10 +4,13 @@ import { parseCookies, setCookie, destroyCookie } from 'nookies'
 
 const logout = () => {
 
-    localStorage.removeItem("token");
+    console.log('click')
 
-    destroyCookie(null, 'token')
+    // console.log('click')
 
+    // localStorage.removeItem("token");
+
+    // destroyCookie(null, 'token')
 }
 
-export default logout
+export default logout;
