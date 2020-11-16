@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
-import { useRouter } from 'next/router'
+import React from 'react'
+import { useForm } from "react-hook-form";
 import { useApolloClient } from '@apollo/react-hooks'
 import { gql, HttpLink } from 'apollo-boost'
 import { setContext } from '@apollo/client/link/context';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
-import cookieCutter from 'cookie-cutter'
 import Router from 'next/router'
 
 const login_mutation = gql `
@@ -19,50 +18,52 @@ const LoginForm = ({ loggedIn, ...props }) => {
 
   const apolloClient = useApolloClient()
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [login, setLogin] = useState('true')
+  const { register, handleSubmit, errors } = useForm();
 
   let inMemoryToken;
 
-  const submitForm = async (event) => {
+  const onSubmit = async (data) => {
 
-   event.preventDefault()
+    const { email, password } = data
 
-   const data = await apolloClient.mutate(
+    const submittedData = await apolloClient.mutate(
       {
-        mutation: login_mutation, variables : {
-          email,
-          password
+        mutation: login_mutation, variables: {
+          email, password
         }
       }
     )
 
-    console.log(data)
+    inMemoryToken = submittedData.data.loginUser.token
 
-  inMemoryToken = data.data.loginUser.token
+    console.log(inMemoryToken)
 
-  cookieCutter.set('token', inMemoryToken)
+    setCookie({}, 'token', inMemoryToken, {
+      maxAge: 30 * 24 * 60 * 60
+    } )
 
-  if (inMemoryToken){
-    Router.push('/')
+    if (inMemoryToken) {
+      Router.push('/')
+    }
+  
   }
 
-  }
 
   return (
     <div className="w-full h-screen flex">
-    <img src="/africa-background.jpg" alt="background" className="object-cover object-center h-screen w-7/12" />
+    <img src="/africa-background.jpg" alt="background" className="object-cover object-center h-screen w-6/12" />
     <div className="bg-black flex flex-col justify-center items-center w-5/12 shadow-lg">
       <h1 className="text-3xl font-bold text-white mb-2">LOGIN</h1>
       <div className="w-1/2 text-center">
-      <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={submitForm}>
+      <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-6 rounded-md shadow-sm">
           <div>
-            <input onChange={event => setEmail(event.target.value)} aria-label="Email address" name="email" type="email" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Email address"></input>
+            <input ref={register} required aria-label="Email address" name="email" type="email" className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Email address"></input>
+            {errors.email && (<p className="font-bold text-red-900">Email is required</p>)}
           </div>
           <div className="-mt-px">
-            <input onChange={event => setPassword(event.target.value)} aria-label="Password" name="password" type="password" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Password"></input>
+            <input ref={register}  required aria-label="Password" name="password" type="password" className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Password"></input>
+            {errors.password && (<p className="font-bold text-red-900">Password is required</p>)}
           </div>
         <div className="mt-6">
           <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">

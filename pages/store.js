@@ -108,7 +108,7 @@ const ProductList = (props) => {
     <Nav loggedIn={props.loggedIn} />
       <div className="flex-col">
         <div className="flex justify-center">
-          <h1 className="text-6xl text-orange-600 font-mono font-bold leading-normal mt-0 mb-2 ">
+          <h1 className="text-6xl text-center font-bold text-white leading-normal mt-0 mb-2 ">
             SHOP
           </h1>
         </div>

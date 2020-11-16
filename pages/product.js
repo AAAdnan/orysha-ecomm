@@ -92,9 +92,9 @@ const addProduct = (props) => {
     </Head>
     <Nav loggedIn={props.loggedIn} />
     <CloudinaryContext cloudName="dpenuk5fh">
-      <div className="flex items-center justify-center">
+      <div className="container lg:w-1/2 mx-auto flex items-center justify-center border-solid border-4 border-orange-600 pb-8 mt-16">
           <form className="mt-24" onSubmit={handleSubmit(onSubmit)} >
-              <h1 className="text-3xl text-center font-bold text-white mb-2">Add Product</h1>
+              <h1 className="text-3xl text-center font-bold text-white mb-2 pb-8">Add Product</h1>
               <div className="flex flex-wrap -mx-3 mb-6">
                 <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                     <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-name">
@@ -160,7 +160,6 @@ const addProduct = (props) => {
           </form>
         </div>
       </CloudinaryContext>
-    
     </>
     )
 }
