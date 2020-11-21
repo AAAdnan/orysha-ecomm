@@ -6,6 +6,7 @@ import { setContext } from '@apollo/client/link/context';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import cookieCutter from 'cookie-cutter'
 import Nav from '../components/Nav';
+import Footer from '../components/Footer';
 import '@fortawesome/fontawesome-free/js/fontawesome';
 import '@fortawesome/fontawesome-free/js/solid';
 import '@fortawesome/fontawesome-free/js/regular';
@@ -45,8 +46,11 @@ function MyApp({ Component, pageProps }) {
     <div className="h-screen">
     <main className="flex-1">
       <Component {...pageProps} />
+      <Footer />
     </main>
+    
     </div>
+
   </ApolloProvider>
   )
 }

@@ -7,6 +7,7 @@ import { useApolloClient } from '@apollo/client';
 import { gql } from 'apollo-boost';
 import Head from "next/head";
 import Nav from '../components/Nav';
+import Footer from '../components/Footer'
 import Router from 'next/router';
 
 export const getServerSideProps = async ctx => {
@@ -92,7 +93,7 @@ const addProduct = (props) => {
     </Head>
     <Nav loggedIn={props.loggedIn} />
     <CloudinaryContext cloudName="dpenuk5fh">
-      <div className="container lg:w-1/2 mx-auto flex items-center justify-center border-solid border-4 border-orange-600 pb-8 mt-16">
+      <div className="container lg:w-1/2 mx-auto flex items-center justify-center border-solid border-4 border-orange-600 pb-8 mt-16 mb-20">
           <form className="mt-24" onSubmit={handleSubmit(onSubmit)} >
               <h1 className="text-3xl text-center font-bold text-white mb-2 pb-8">Add Product</h1>
               <div className="flex flex-wrap -mx-3 mb-6">

@@ -1,16 +1,17 @@
 import { gql } from 'apollo-boost';
-import { parseCookies, setCookie, destroyCookie } from 'nookies'
+import { parseCookies, setCookie, destroyCookie } from 'nookies';
+import Router from 'next/router';
 
 
 const logout = () => {
 
-    console.log('click')
 
-    // console.log('click')
+    localStorage.removeItem('authToken');
 
-    // localStorage.removeItem("token");
+    destroyCookie(null, 'token')
 
-    // destroyCookie(null, 'token')
+    Router.push('/product')
+
 }
 
 export default logout;

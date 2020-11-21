@@ -7,7 +7,7 @@ import  { toCursorHash, fromCursorHash } from './cursorHash'
 
 const resolvers = {
     Query: {
-      products: async(parent, { pageSize = 2, cursor, name, gender }) => {
+      products: async(parent, { pageSize = 2, cursor, name, gender, id }) => {
   
         let decodedCursor
 
@@ -19,7 +19,7 @@ const resolvers = {
   
         const baseQuery = database.select().from('products');
   
-        if (decodedCursor) {
+        if (decodedCursor && !id) {
           baseQuery.where('id', '>', decodedCursor)
         }
   
@@ -29,6 +29,10 @@ const resolvers = {
   
         if (gender) {
           baseQuery.where('gender', 'like', `%${gender}%`)
+        }
+
+        if (id) {
+          baseQuery.where('id', `${id}`)
         }
         
         const products = await baseQuery.limit(pageSize + 1)
@@ -139,12 +143,20 @@ const resolvers = {
   
       // },
   
-      async addItemToBasket(root, { basketId } , context) {
+      async addItemToBasket(root, { productId, quantity }, context) {
+
+
   
-        if(!basketId){
+        // if(!basketId){
+
+        //   await database('basket_table').insert()
   
-          //insert basket into basket table
-        }
+        //   //insert basket into basket table
+        // }
+
+        // await database('basket_item_table').insert({ quantity, productId }, [
+        //   'basket_quantity', 'product_id', 'basket_table_id'
+        // ])
   
         //insert into basket_item_table -- quantity, product_id, basket_id
   
@@ -155,7 +167,7 @@ const resolvers = {
   
         const [ user ] = await database('basket_table').where({ user_id })
   
-        console.log(basketId)
+        return user
   
   
       },
@@ -196,7 +208,6 @@ const resolvers = {
         }
   
   
-      
         const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d'} )
       
         return {

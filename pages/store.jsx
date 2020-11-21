@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Link from 'next/Link';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import { gql, HttpLink } from 'apollo-boost'
 import { useApolloClient } from '@apollo/client';
 import { useQuery } from '@apollo/react-hooks';
 import Nav from '../components/Nav';
+import ProductItem from '../components/ProductItem';
 import Head from "next/head";
 import { useRouter } from 'next/router'
 import usePageBottom from '../utils/usePageBottom';
@@ -25,6 +27,7 @@ const GET_PRODUCTS = gql `
       products(pageSize: $pageSize, cursor: $cursor, name: $name, gender: $gender) {
         edges {
           node {
+            id
             name
             description
             price
@@ -98,7 +101,6 @@ const ProductList = (props) => {
 
   const { products } = props
 
-
   return (
     <>
     <Head>
@@ -113,18 +115,26 @@ const ProductList = (props) => {
           </h1>
         </div>
         <div className="flex justify-around" onClick={(event) => router.push(`/store?gender=${event.target.value}`)}>
-          <button value="M" className="bg-orange-400 hover:bg-orange-700 text-black font-bold py-2 px-4 rounded text-2xl" >M</button>
-          <button value="F" className="bg-orange-400 hover:bg-orange-700 text-black font-bold py-2 px-4 rounded text-2xl">W </button>
+          <button value="M" className="bg-black text-orange-600 hover:bg-orange-600 hover:text-black font-bold py-2 px-4 rounded text-2xl" >M</button>
+          <button value="F" className="bg-black text-orange-600 hover:bg-orange-600 hover:text-black font-bold py-2 px-4 rounded text-2xl">W </button>
         </div>
       </div>
       <div className="container rounded bg-orange-300 mx-auto my-12 p-12">
         <div className="flex flex-col items-center">
         <input onChange={(event) => router.push(`/store?name=${event.target.value}`)}  className="w-full h-16 px-3 rounded mb-8 focus:outline-none focus:shadow-outline text-xl px-8 shadow-lg" type="search" placeholder="Search Product" />
-          {  products.map(( { id, name, description, price, size, image }) => (
-            <ProductItem key={id} name={name} id={id} description={description} price={price} size={size} image={image} />))
-          }
-                
-          </div>      
+            {products.map(({ id, name, description, price, size, image}) => (
+              <
+              Link 
+              href={{
+                pathname: `/store/product/${id}`,
+                query: { name: 'test'},
+              }}              
+              >
+                <ProductItem key={id} name={name} id={id} description={description} price={price} size={size} image={image} name={name} />
+              </Link>   
+            ))}
+          </div> 
+      
       </div>
     </>
   )
@@ -133,51 +143,6 @@ const ProductList = (props) => {
 //correct query & resolver
 //stripe elements - generates token, pass token to backend
 //backend - stripe sdk, npm module, use token to create charges 
-
-const ProductItem = props => {
-
-  const apolloClient = useApolloClient()
-
-  const [quantity, setQuantity] = useState('');
-
-
-  const addItemToBasket = async (productId) => {
-
-    const data = await apolloClient.mutate(
-        {
-          mutation: add_item_to_basket_mutation , variables: { productId }
-        }
-      )
-  }
-
-  return (
-
-    <div className="py-6">
-      <div className="flex max-w-2xl h-64 border-solid border-4 border-gray-600 bg-white rounded overflow-hidden shadow-lg">
-        <div className="w-1/3 p-8">
-          <img className="w-full object-cover" src={props.image}></img>
-        </div>
-        <div className="w-1/3 p-8">
-            <h1 className="text-black font-mono font-bold text-2xl">{ props.name }</h1>
-            <h1 className="text-black text-base">£{ props.price }</h1>
-            <div className="flex justify-between mt-2">
-              <h1 className="text-black font-bold text-xl">Quantity</h1>
-                <select>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                </select>
-            </div>
-            <p className="mt-2 text-black text-sm">{ props.description }</p>
-          <button onClick={() => addItemToBasket(props.id)} className="px-3 py-2 mt-8 bg-black text-yellow-600 text-xs font-bold uppercase rounded">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-
-    )
-};
-
-
    
 export default ProductQuery;
 

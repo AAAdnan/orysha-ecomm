@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 
 // const logout = dynamic(import("../components/Logout"));
-import logout from '../components/Logout';
+import logout from './Logout';
 
 setContext((_, { headers }) => {
   return {
@@ -53,7 +53,7 @@ const Nav = (props, {fixed }) => {
                 <NavItem text="PRODUCT" href="/product " font="fab fa-product-hunt text-lg leading-lg text-white opacity-75"/>
                 <NavItem text="STORE" href="/store " font="fas fa-store text-lg leading-lg text-white opacity-75"/>
                 <NavItem text="CART" href="/cart " font="fas fa-shopping-cart text-lg leading-lg text-white opacity-75"/>
-                { props.loggedIn && <NavItem text="SIGN OUT" href="/" onClick={() => logout} font="fas fa-door-open text-lg leading-lg text-white opacity-75"/> }
+                { props.loggedIn && <NavItem text="SIGN OUT" href="/" onClick={() => logout()} font="fas fa-door-open text-lg leading-lg text-white opacity-75"/> }
             </ul>
           </div>
         </div>
