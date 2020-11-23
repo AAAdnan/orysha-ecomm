@@ -123,49 +123,21 @@ const resolvers = {
   
       },
   
-      // async createBasket(root, args , context){
-  
-      //   if (!context.user) return 'not allowed to create baskets';
-  
-      //   const user_id = context.user.userId;
-  
-      //   const [ user ] = await database('basket_table').where( { user_id })
-  
-      //   if (!user) {
-  
-      //     const [ createBasket ] = await database('basket_table').insert( { user_id } , [
-      //       'user_id'
-      //     ])
-  
-      //     return createBasket;
-  
-      //   }
-  
-      // },
   
       async addItemToBasket(root, { productId, quantity }, context) {
 
-
-  
-        // if(!basketId){
-
-        //   await database('basket_table').insert()
-  
-        //   //insert basket into basket table
-        // }
-
-        // await database('basket_item_table').insert({ quantity, productId }, [
-        //   'basket_quantity', 'product_id', 'basket_table_id'
-        // ])
-  
-        //insert into basket_item_table -- quantity, product_id, basket_id
-  
-        //write query to access basket and items
-  
-  
         const user_id = context.user.userId;
+
+        if (user_id) {
+           await database('basket_table').insert({ user_id }, [ 'user_id'])
+        }
+
+        const [ basket_id ] = await database('basket_table').where({ user_id}, [
+          'user_id'])
+
+
+        await database('basket_item_table').insert({ quantity, productId }, ['basket_quantity', 'product_id', 'basket_id'])  
   
-        const [ user ] = await database('basket_table').where({ user_id })
   
         return user
   

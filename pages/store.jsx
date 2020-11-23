@@ -130,7 +130,7 @@ const ProductList = (props) => {
                 query: { name: 'test'},
               }}              
               >
-                <ProductItem key={id} name={name} id={id} description={description} price={price} size={size} image={image} name={name} />
+                <ProductItem key={id} name={name} id={id} price={price} size={size} image={image} name={name} />
               </Link>   
             ))}
           </div> 

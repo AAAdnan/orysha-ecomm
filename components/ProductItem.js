@@ -30,18 +30,11 @@ const ProductItem = props => {
           <div className="w-1/3 p-8">
                 <h1 className="text-black font-mono font-bold text-2xl">{ props.name }</h1>
               <h1 className="text-black text-base">£{ props.price }</h1>
-              <div className="flex justify-between mt-2">
-                <h1 className="text-black font-bold text-xl">Quantity</h1>
-                  <select onChange={ event => setQuantity(event.target.value)} >
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                  </select>
-              </div>
               <Link href={`store/product/${props.id}`}>
                 <a>
-                    <p className="mt-2 mb-4 text-black text-sm">{ props.description }</p>
-                    <span className="text-orange-600 text-sm pr-8">View Item</span><i className="fas fa-arrow-right"></i>
+                    <button className="bg-black hover:bg-orange-600 rounded py-2 px-2 mt-6">
+                      <span className="text-white text-sm pr-8">View Item</span><i className="fas fa-arrow-right text-white"></i>
+                    </button>
                 </a>
               </Link>
           </div>

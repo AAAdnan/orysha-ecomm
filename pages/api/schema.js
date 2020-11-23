@@ -52,7 +52,7 @@ const typeDefs = gql`
         updateProduct(id: Int!, name: String!, description: String, price: String, size: String): Product
         addProduct(name: String!, description: String!, price: String!, size: String!, image: String!, gender: String!): Product
         deleteProduct(id: Int!): Product
-        addItemToBasket: Basket
+        addItemToBasket(productId:String!, quantity: Int!): Basket
         signUpUser(email:String!, password: String!, name: String! ): AuthPayload
         loginUser(email: String!, password: String! ): AuthPayload
     }

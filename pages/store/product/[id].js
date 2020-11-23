@@ -47,21 +47,6 @@ if(data && data.products && Array.isArray(data.products.edges) ) {
   product = {}
 }
 
-console.log(product)
-
-
-    const addItemToBasket = (productId) => {
-  
-        // const data = await apolloClient.mutate(
-        //     {
-        //       mutation: add_item_to_basket_mutation , variables: { productId, quantity }
-        //     }
-        //   )
-
-        console.log(name)
-    
-      }
-
     return(
         <>
           <Nav />

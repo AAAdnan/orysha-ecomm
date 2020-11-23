@@ -50,9 +50,9 @@ const LoginForm = ({ loggedIn, ...props }) => {
 
 
   return (
-    <div className="w-full h-screen flex">
-    <img src="/africa-background.jpg" alt="background" className="object-cover object-center h-screen w-6/12" />
-    <div className="bg-black flex flex-col justify-center items-center w-5/12 shadow-lg">
+    <div className="container mx-auto relative mt-8 h-screen flex mb-12">
+    <img src="/africa-background.jpg" alt="background" className="z-0 bg-cover bg-center h-screen" />
+    <div className="z-10 absolute top-50 left-100  bg-black opacity-50 flex flex-col justify-center items-center shadow-lg w-6/12">
       <h1 className="text-3xl font-bold text-white mb-2">LOGIN</h1>
       <div className="w-1/2 text-center">
       <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onSubmit)}>

@@ -17,14 +17,11 @@ const SignUpForm = ({ loggedIn, ...props }) => {
 
   const apolloClient = useApolloClient()
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName ] = useState('')
-
   const { register, handleSubmit, errors } = useForm();
 
 
   let inMemoryToken;
+
 
   const onSubmit = async (data) => {
 
@@ -60,12 +57,12 @@ const SignUpForm = ({ loggedIn, ...props }) => {
   }
 
   return (
-    <div className="w-full h-screen flex">
-    <img src="/lion-two.jpg" alt="background" className="object-cover object-center h-screen w-6/12" />
-    <div className="bg-black flex flex-col justify-center items-center w-5/12 shadow-lg">
-      <h1 className="text-3xl font-bold text-white mb-2">Sign Up</h1>
+    <div className="container relative mx-auto mt-12 mb-8 h-screen flex">
+    <img src="/lion-two.jpg" alt="background" className="object-cover object-center h-screen w-full" />
+    <div className="absolute top-0 left-0 opacity-75 bg-white flex flex-col justify-center items-center w-6/12 shadow-lg">
+      <h1 className="text-3xl font-bold text-black mb-2">Sign Up</h1>
       <div className="w-1/2 text-center">
-      <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onSubmit)}>
+      <form className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-6 rounded-md shadow-sm">
           <div>
             <input ref={register} aria-label="Name" name="name" type="name" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Name"></input>

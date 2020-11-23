@@ -9,13 +9,12 @@ export const getServerSideProps = async ctx => {
 
   const cookies = parseCookies(ctx)
 
-  console.log(cookies)
+  if(!cookies.token) return { props: { loggedIn: false } }
 
-  if(!cookies) return { props: { loggedIn: false } }
-
-  if(cookies) return { props: { loggedIn: true } }
+  if(cookies.token) return { props: { loggedIn: true } }
   
 }
+
 
 export default function Login(props) {
   
