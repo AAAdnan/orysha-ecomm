@@ -34,6 +34,7 @@ const typeDefs = gql`
     type Basket {
         id: ID!,
         user: User,
+        quantity: Int,
         items: [BasketItem],
         cost: Int
     }
@@ -46,13 +47,13 @@ const typeDefs = gql`
         products(pageSize: Int, cursor: String, name:String, gender:String, id: Int ): ProductConnection!
         findUser: User
         users: [User]
-        me: User
+        basket(id: ID, user: ID, cost: Int, quantity: Int): Basket
     }
     type Mutation {
         updateProduct(id: Int!, name: String!, description: String, price: String, size: String): Product
         addProduct(name: String!, description: String!, price: String!, size: String!, image: String!, gender: String!): Product
         deleteProduct(id: Int!): Product
-        addItemToBasket(productId:String!, quantity: Int!): Basket
+        addItemToBasket(productId:String!, quantity: Int, id: String ): Basket
         signUpUser(email:String!, password: String!, name: String! ): AuthPayload
         loginUser(email: String!, password: String! ): AuthPayload
     }

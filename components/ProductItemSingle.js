@@ -1,11 +1,10 @@
 import Link from 'next/Link';
 import { useState } from 'react';
-import { useApolloClient } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
+import { gql, useMutation } from '@apollo/client';
 
 
-const add_item_to_basket_mutation = gql `
-  mutation($productId:String, $quantity:Int) {
+const ADD_ITEM = gql `
+  mutation($productId:String!, $quantity:Int) {
     addItemToBasket(productId: $productId, quantity: $quantity) {
       items {
           product {
@@ -16,24 +15,26 @@ const add_item_to_basket_mutation = gql `
   }
 `
 
+
 const ProductItemSingle = (props) => {
 
+    let userLoggedIn = props.loggedIn;
+
+    var timestamp = new Date().getUTCMilliseconds();
+
+    if (!userLoggedIn) {
+        localStorage.setItem('id', timestamp )
+    }
+
     const [quantity, setQuantity] = useState(1);
-    
+
+    const [ addItem, { loading, error, data }] = useMutation(ADD_ITEM);
+
     const { product } = props;
 
-    const apolloClient = useApolloClient()
+    const addItemToBasket = (productId, quantity) => {
 
-    const addItemToBasket = async (productId) => {
-  
-        const data = await apolloClient.mutate(
-            {
-              mutation: add_item_to_basket_mutation , variables: { productId, quantity }
-            }
-          )
-
-        console.log(data)
-
+        addItem({ variables: { productId, quantity }})
     
     }
 
@@ -49,7 +50,7 @@ const ProductItemSingle = (props) => {
                 <h1 className="text-black text-base">£{ product.price }</h1>
                 <div className="flex justify-between mt-2">
                     <h1 className="text-black font-bold text-xl">Quantity</h1>
-                    <select onChange={ event => setQuantity(event.target.value)} >
+                    <select onChange={ event => setQuantity(parseInt(event.target.value))} >
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -57,7 +58,7 @@ const ProductItemSingle = (props) => {
                 </div>
                 <p className="mt-2 mb-4 text-black text-sm">{ product.description }</p>
                     <div className="flex row justify-around">
-                        <button onClick={() => addItemToBasket(product.id)} className="px-3 py-6 mt-8 bg-black hover:bg-black text-white hover:text-orange-600 text-xs font-bold uppercase rounded">Add to Cart</button>
+                        <button onClick={() => addItemToBasket(product.id, quantity)} className="px-3 py-6 mt-8 bg-black hover:bg-black text-white hover:text-orange-600 text-xs font-bold uppercase rounded">Add to Cart</button>
                         <Link href="/store">
                             <a>
                                 <button className="px-3 py-6 mt-8 bg-black hover:bg-black text-white hover:text-orange-600 text-xs font-bold uppercase rounded">Return to store</button>

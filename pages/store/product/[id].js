@@ -1,9 +1,20 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { gql, HttpLink } from 'apollo-boost';
-import { useQuery } from '@apollo/react-hooks';
+import { HttpLink } from 'apollo-boost';
+import { parseCookies, setCookie, destroyCookie } from 'nookies'
+import { gql, useQuery } from '@apollo/client';
 import ProductItemSingle from  '../../../components/ProductItemSingle';
 import Nav from '../../../components/Nav';
+
+export const getServerSideProps = async ctx => {
+
+  const cookies = parseCookies(ctx)
+
+  if(!cookies.token) return { props: { loggedIn: false } }
+
+  if(cookies.token) return { props: { loggedIn: true } }
+  
+}
 
 
 const ProductSinglePage = ( props ) => {
@@ -13,9 +24,6 @@ const ProductSinglePage = ( props ) => {
   const { query } = router
 
   const newQuery = parseInt(query.id);
-
-
-  const [quantity, setQuantity] = useState(1);
 
   const GET_PRODUCTS = gql `
   query($pageSize: Int, $cursor: String, $name: String, $gender: String, $id: Int) {
@@ -49,9 +57,9 @@ if(data && data.products && Array.isArray(data.products.edges) ) {
 
     return(
         <>
-          <Nav />
+          <Nav loggedIn={props.loggedIn}/>
           <div className="container rounded bg-orange-300 mx-auto my-12 p-12">
-            <ProductItemSingle product={product} />
+            <ProductItemSingle loggedIn={props.loggedIn} product={product} />
           </div>
         </>
     )

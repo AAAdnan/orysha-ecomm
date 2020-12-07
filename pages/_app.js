@@ -17,9 +17,7 @@ const httpLink = new HttpLink({
 });
 
 let token;
-
-//cookies server-side and client
-
+ 
 const authLink = setContext((_, { headers }) => {
   if (typeof window !=='undefined') {
       token = cookieCutter.get('token');

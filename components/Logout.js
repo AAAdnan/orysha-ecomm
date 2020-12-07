@@ -5,12 +5,13 @@ import Router from 'next/router';
 
 const logout = () => {
 
+    console.log('loggedout')
 
     localStorage.removeItem('authToken');
 
     destroyCookie(null, 'token')
 
-    Router.push('/product')
+    Router.push('/')
 
 }
 

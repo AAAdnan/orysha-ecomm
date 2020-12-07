@@ -3,22 +3,7 @@ import Link from 'next/Link';
 import { useApolloClient } from '@apollo/client';
 import ProductSingle from "../pages/store/product/[id]";
 
-const ProductItem = props => {
-
-    const apolloClient = useApolloClient()
-  
-    const [quantity, setQuantity] = useState(1);
-    
-    const addItemToBasket = (productId) => {
-  
-      // const data = await apolloClient.mutate(
-      //     {
-      //       mutation: add_item_to_basket_mutation , variables: { productId, quantity }
-      //     }
-      //   )
-  
-      console.log(quantity)
-    }
+const ProductItem = props => {  
   
     return (  
       <>

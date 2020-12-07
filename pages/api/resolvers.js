@@ -10,8 +10,6 @@ const resolvers = {
       products: async(parent, { pageSize = 2, cursor, name, gender, id }) => {
   
         let decodedCursor
-
-        console.log(decodedCursor)
   
         if (cursor) {
          decodedCursor = fromCursorHash(cursor);
@@ -61,17 +59,31 @@ const resolvers = {
         const users = await database.select().from('user_table')
         return users
       },
-      me: async( root, { user }, context,info) => {
-  
-        if(!user) {
-          throw new Error('You are not authenticated')
-        }
-  
-        const id = user.id
-  
-        return await database('user_table').where( id )
-  
-      }
+      basket: async ( root, { id }, context, info ) => {
+
+        const user_id = context.user.userId;
+
+        const [ { id: basket_id }] = await database('basket_table').where( { user_id })
+
+        const basket_items = await database('basket_item_table').where({ basket_table_id : basket_id  })
+
+        let quantity = basket_items.map(a => a.basket_quantity )
+
+        let productIds = basket_items.map(a => a.product_id )
+
+        let first = productIds[0]
+
+        let result = await database('products') .where( { id: first })
+
+        const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
+        let number_basket_items = quantity.reduce(reducer);
+
+        console.log(number_basket_items)
+
+        return { id : id || basket_id, items: [ result ] , quantity: number_basket_items, cost: 0 }
+
+      },
     },
   
     Mutation: {
@@ -124,24 +136,34 @@ const resolvers = {
       },
   
   
-      async addItemToBasket(root, { productId, quantity }, context) {
-
+      async addItemToBasket(root, { productId, quantity, id }, context) {
+        
         const user_id = context.user.userId;
 
-        if (user_id) {
-           await database('basket_table').insert({ user_id }, [ 'user_id'])
-        }
+        // await database('basket_table').insert( { user_id } , [ 'user_id' ]).onConflict('user_id').ignore()
 
-        const [ basket_id ] = await database('basket_table').where({ user_id}, [
-          'user_id'])
+        const [ { id: basket_id } ] = await database('basket_table').where({ user_id }, [ 'user_id', 'id'])
+
+        const [ basket_item ] = await database('basket_item_table').insert({ basket_quantity: quantity, product_id: productId, basket_table_id: basket_id }, ['basket_quantity', 'product_id', 'basket_table_id'])
+
+        const [ basket ] = await database('basket_item_table').where({ basket_table_id : basket_id  })
+
+        console.log(Object.values(basket)[1])
+
+        //client sdk stripe API
+
+        //map each item to the line item price, then reduce to do sum
+        
+        //load the existing basket-items if basket already exists
+        //grab product by id, multiply each product price with the quantity in the basket time
+
+        //map from database output shape to expected GraphQL schema fields
+
+        //{ quantity: basket_item.basket_quantity } 
 
 
-        await database('basket_item_table').insert({ quantity, productId }, ['basket_quantity', 'product_id', 'basket_id'])  
-  
-  
-        return user
-  
-  
+        return { id : id || basket_id, items: [basket_item], cost: 0 }
+    
       },
   
       async signUpUser( root, { name, email, password }, info) {
@@ -154,7 +176,11 @@ const resolvers = {
   
         const [ user ] = await database('user_table').insert({ name, email, password: passwordHashed}, [
           'name', 'email', 'password', 'id', 'role'])
-  
+
+          if (user) {
+             await database('basket_table').insert( { user_id: user.id } , [ 'user_id'])
+          }
+
         const token = jwt.sign( { userId: user.id, email: user.email, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d'})
   
         return { userId: user.id, token }

@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/Link';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
-import { gql, HttpLink } from 'apollo-boost'
-import { useApolloClient } from '@apollo/client';
-import { useQuery } from '@apollo/react-hooks';
+import { HttpLink } from 'apollo-boost'
+import { useApolloClient, useQuery, gql } from '@apollo/client';
 import Nav from '../components/Nav';
 import ProductItem from '../components/ProductItem';
 import Head from "next/head";
@@ -139,6 +138,8 @@ const ProductList = (props) => {
     </>
   )
 }
+
+//as - next, router
 
 //correct query & resolver
 //stripe elements - generates token, pass token to backend

@@ -1,20 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { setContext } from '@apollo/client/link/context';
-import dynamic from 'next/dynamic'
-import { parseCookies, setCookie, destroyCookie } from 'nookies'
-
-// const logout = dynamic(import("../components/Logout"));
 import logout from './Logout';
-
-setContext((_, { headers }) => {
-  return {
-   headers: {
-      ...headers,
-      Authorization: inMemoryToken ? `Bearer ${inMemoryToken}` : "",
-    }
-  }
-});
 
 
 const Nav = (props, {fixed }) => {
@@ -46,11 +32,11 @@ const Nav = (props, {fixed }) => {
             id="example-navbar-danger"
           >
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
-                <Link className="text-white" href="/store">store</Link>
                 <NavItem text="HOME" href="/" font="fas fa-home text-lg leading-lg text-white opacity-75"/>
+                <NavItem text="ABOUT" href="/about" font="fas fa-info text-lg leading-lg text-white opacity-75"/>
                 { !props.loggedIn && <NavItem text="LOGIN" href="/login" font="fa fa-id-badge leading-lg text-white opacity-75"/> } 
-                { !props.loggedIn && <NavItem text="REGISTER" href="/signup" font="fa fa-id-badge leading-lg text-white opacity-75"/> }
-                <NavItem text="PRODUCT" href="/product " font="fab fa-product-hunt text-lg leading-lg text-white opacity-75"/>
+                { !props.loggedIn && <NavItem text="SIGN UP" href="/signup" font="fa fa-id-badge leading-lg text-white opacity-75"/> }
+                { props.loggedIn && <NavItem text="PRODUCT" href="/product " font="fab fa-product-hunt text-lg leading-lg text-white opacity-75"/> }
                 <NavItem text="STORE" href="/store " font="fas fa-store text-lg leading-lg text-white opacity-75"/>
                 <NavItem text="CART" href="/cart " font="fas fa-shopping-cart text-lg leading-lg text-white opacity-75"/>
                 { props.loggedIn && <NavItem text="SIGN OUT" href="/" onClick={() => logout()} font="fas fa-door-open text-lg leading-lg text-white opacity-75"/> }

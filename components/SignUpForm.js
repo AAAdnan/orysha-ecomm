@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import { useForm } from "react-hook-form";
-import { useApolloClient } from '@apollo/react-hooks'
-import { gql } from 'apollo-boost'
+import { ApolloClient, InMemoryCache, gql, useMutation } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import Router from 'next/router'
 
-const signup_mutation = gql `
+const SIGN_UP = gql `
   mutation($email:String!, $password:String!, $name:String!) {
     signUpUser(email: $email, password: $password, name: $name,) {
       token
@@ -15,27 +14,11 @@ const signup_mutation = gql `
 `
 const SignUpForm = ({ loggedIn, ...props }) => {
 
-  const apolloClient = useApolloClient()
+  const[ signUp, { data, loading, error }] = useMutation(SIGN_UP)
 
-  const { register, handleSubmit, errors } = useForm();
-
-
-  let inMemoryToken;
-
-
-  const onSubmit = async (data) => {
-
-    const { name, email, password } = data
-
-    const submittedData = await apolloClient.mutate(
-      {
-        mutation: signup_mutation, variables: {
-          email, password, name
-        }
-      }
-    )
-
-    inMemoryToken = submittedData.data.signUpUser.token
+  if(data) {
+    
+    let inMemoryToken = data.signUpUser.token
 
     setCookie({}, 'token', inMemoryToken, {
       maxAge: 30 * 24 * 60 * 60
@@ -53,13 +36,28 @@ const SignUpForm = ({ loggedIn, ...props }) => {
     if (inMemoryToken) {
       Router.push('/')
     }
+
+  }
+
+
+  const { register, handleSubmit, errors } = useForm();
+
+  const onSubmit = async (data) => {
+
+    const { name, email, password } = data
+
+    signUp({
+      variables: {
+        email, password, name
+      }
+    })
   
   }
 
   return (
     <div className="container relative mx-auto mt-12 mb-8 h-screen flex">
     <img src="/lion-two.jpg" alt="background" className="object-cover object-center h-screen w-full" />
-    <div className="absolute top-0 left-0 opacity-75 bg-white flex flex-col justify-center items-center w-6/12 shadow-lg">
+    <div className="absolute inset-0 opacity-75 bg-orange-300 flex flex-col justify-center items-center shadow-lg">
       <h1 className="text-3xl font-bold text-black mb-2">Sign Up</h1>
       <div className="w-1/2 text-center">
       <form className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onSubmit)}>
