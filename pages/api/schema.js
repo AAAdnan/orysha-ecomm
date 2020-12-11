@@ -47,7 +47,7 @@ const typeDefs = gql`
         products(pageSize: Int, cursor: String, name:String, gender:String, id: Int ): ProductConnection!
         findUser: User
         users: [User]
-        basket(id: ID, user: ID, cost: Int, quantity: Int): Basket
+        basket(id: ID, user: Int, cost: Int, quantity: Int): Basket
     }
     type Mutation {
         updateProduct(id: Int!, name: String!, description: String, price: String, size: String): Product

@@ -20,11 +20,9 @@ const ProductItemSingle = (props) => {
 
     let userLoggedIn = props.loggedIn;
 
-    var timestamp = new Date().getUTCMilliseconds();
-
-    if (!userLoggedIn) {
-        localStorage.setItem('id', timestamp )
-    }
+    // if (!userLoggedIn) {
+    //     localStorage.setItem('id', timestamp )
+    // }
 
     const [quantity, setQuantity] = useState(1);
 

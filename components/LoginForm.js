@@ -25,6 +25,8 @@ const LoginForm = ({ loggedIn, ...props }) => {
     
     let inMemoryToken = data.loginUser.token
 
+    console.log(inMemoryToken)
+
     setCookie({}, 'token', inMemoryToken, {
       maxAge: 30 * 24 * 60 * 60
     })
