@@ -40,7 +40,11 @@ const typeDefs = gql`
     }
     type BasketItem {
         product: Product,
-        quantity: Int 
+        quantity: Int,
+        name: String,
+        description: String,
+        size: Int,
+        image: String,
         price: Int
     }
     type Query {

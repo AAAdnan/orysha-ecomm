@@ -74,33 +74,13 @@ const resolvers = {
 
         const [ { id: basket_id }] = await database('basket_table').where( { user_id })
 
-        const basket_test = await database('basket_item_table').join('products', 'products.id', 'basket_item_table.product_id').select('*').where({ basket_table_id: basket_id })
+        const basket_items = await database('basket_item_table').join('products', 'products.id', 'basket_item_table.product_id').select('*').where({ basket_table_id: basket_id })
 
-        console.log(basket_test.length)
+        let quantity = basket_items.reduce((a, {basket_quantity}) => a + basket_quantity, 0);
 
-        // if (!user_id) {
-        //   await database('basket_table')
-        // }
+        let sum = basket_items.map(p => p.price * p.basket_quantity).reduce((a,b) => a + b)
 
-
-        // let quantity = basket_items.map(a => a.basket_quantity )
-
-        // let productIds = basket_items.map(a => a.product_id )
-
-        // let first = productIds[0]
-
-        // let result = await database('products') .whereIn( 'id', productIds)
-
-        //for each basket item, calculate the cost
-        //reduce over array of costs
-
-        console.log(basket_items)
-
-        const reducer = (accumulator, currentValue) => accumulator + currentValue;
-
-        let number_basket_items = quantity.reduce(reducer);
-
-        return { id : id || basket_id, items: [ item ] , quantity: 0, cost: 0 }
+        return { id : id || basket_id, items: basket_items , quantity: quantity, cost: sum }
 
       },
     },
