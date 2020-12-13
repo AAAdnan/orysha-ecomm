@@ -20,6 +20,8 @@ const ProductItemSingle = (props) => {
 
     let userLoggedIn = props.loggedIn;
 
+    
+
     // if (!userLoggedIn) {
     //     localStorage.setItem('id', timestamp )
     // }

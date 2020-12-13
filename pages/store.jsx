@@ -41,13 +41,6 @@ const GET_PRODUCTS = gql `
     }
 `
 
-const add_item_to_basket_mutation = gql `
-  mutation {
-    addItemToBasket{
-      id
-    }
-  }
-`
 
 const ProductQuery = (props) => {
 
@@ -56,6 +49,7 @@ const ProductQuery = (props) => {
   const router = useRouter();
 
   const { data, error, loading, fetchMore } = useQuery(GET_PRODUCTS, { variables: { name: router.query.name, gender: router.query.gender }} );
+
 
   let products;
 
@@ -139,11 +133,5 @@ const ProductList = (props) => {
   )
 }
 
-//as - next, router
-
-//correct query & resolver
-//stripe elements - generates token, pass token to backend
-//backend - stripe sdk, npm module, use token to create charges 
-   
 export default ProductQuery;
 

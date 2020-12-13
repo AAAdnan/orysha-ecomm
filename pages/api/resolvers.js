@@ -74,7 +74,7 @@ const resolvers = {
 
         const [ { id: basket_id }] = await database('basket_table').where( { user_id })
 
-        const basket_items = await database('basket_item_table').join('products', 'products.id', 'basket_item_table.product_id').select('*').where({ basket_table_id: basket_id })
+        const basket_items = await database('basket_item_table').join('products', 'products.id', 'basket_item_table.product_id').select('product_id', 'basket_item_table.id', 'image', 'basket_quantity','price', 'name', 'description').where({ basket_table_id: basket_id })
 
         let quantity = basket_items.reduce((a, {basket_quantity}) => a + basket_quantity, 0);
 
@@ -159,8 +159,6 @@ const resolvers = {
   
         }
 
-        console.log(basket_id)
-
         // status string on basket_table
 
         const [ basket_item ] = await database('basket_item_table').insert({ basket_quantity: quantity, product_id: productId, basket_table_id: basket_id }, ['basket_quantity', 'product_id', 'basket_table_id'])
@@ -168,15 +166,21 @@ const resolvers = {
         //client sdk stripe API
 
         //map each item to the line item price, then reduce to do sum
-        
-        //load the existing basket-items if basket already exists
-        //grab product by id, multiply each product price with the quantity in the basket time
-
-
+    
         return { id : id || basket_id, items: [basket_item], cost: 0 }
     
       },
-  
+      async removeItemFromBasket(root, { id }, context, info) {
+
+        console.log(id)
+
+        const user_id = context.user.userId;
+
+        await database('basket_item_table').where({ id: id }).del()
+
+        return ('item deleted')
+
+      },
       async signUpUser( root, { name, email, password }, info) {
   
         const [ foundUser ] = await database('user_table').where( { email })
