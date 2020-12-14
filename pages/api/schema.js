@@ -40,6 +40,7 @@ const typeDefs = gql`
     }
     type BasketItem {
         id: ID,
+        product: Product,
         basket_quantity: Int,
         name: String,
         description: String,
@@ -50,6 +51,7 @@ const typeDefs = gql`
     type Query {
         products(pageSize: Int, cursor: String, name:String, gender:String, id: Int ): ProductConnection!
         findUser: User
+        findGuest: Basket
         users: [User]
         basket(id: ID, user: Int, cost: Int, quantity: Int): Basket
     }

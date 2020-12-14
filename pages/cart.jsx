@@ -5,6 +5,8 @@ import Nav from '../components/Nav';
 import Footer from '../components/Footer';
 import Link from 'next/link'
 import { gql, useQuery, useMutation } from '@apollo/client';
+import Router from 'next/router'
+
 
 export const getServerSideProps = async ctx => {
 
@@ -26,9 +28,10 @@ const GET_BASKET = gql `
   }
 `
 
+
 const REMOVE_ITEM = gql `
-  mutation {
-    removeItemFromBasket{
+  mutation($id: ID) {
+    removeItemFromBasket(id: $id){
       id
     }
   }
@@ -40,6 +43,8 @@ const CartQuery = (props) => {
   const { data, error, loading, fetchMore } = useQuery(GET_BASKET);
 
   const [ removeItem, { loading: loadingRemoveItem , error: errorRemoveItem , data: dataRemoveItem }] = useMutation(REMOVE_ITEM);
+
+
 
 
   let quantity, cost, items;
@@ -59,6 +64,10 @@ const CartQuery = (props) => {
   const removeItemFromBasket = (id) => {
 
     removeItem({ variables: { id }})
+
+    if(!errorRemoveItem) {
+      Router.reload()
+    }
   
   }
 
@@ -129,7 +138,7 @@ const CartList = (props) => {
                </a>
            </Link>
          </div>
-      <div id="summary" classNameName="w-1/4 px-8 py-10">
+      <div id="summary" className="w-1/4 px-8 py-10">
         <h1 className="font-semibold text-white text-2xl border-white border-opacity-100 pb-8">Order Summary</h1>
         <div className="flex justify-between mt-10 mb-5">
           <span className="font-semibold text-white text-sm uppercase">{quantity} Items </span>
@@ -142,7 +151,7 @@ const CartList = (props) => {
           </select>
         </div>
         <div className="py-10">
-          <label for="promo" className="font-semibold inline-block mb-3 text-sm uppercase">Promo Code</label>
+          <label htmlFor="promo" className="font-semibold inline-block mb-3 text-sm uppercase">Promo Code</label>
           <input type="text" id="promo" placeholder="Enter your code" className="p-2 text-sm w-full" />
         </div>
         <button className="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white uppercase">Apply</button>

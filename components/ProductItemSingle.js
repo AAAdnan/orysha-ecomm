@@ -1,6 +1,6 @@
 import Link from 'next/Link';
 import { useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client';
 
 
 const ADD_ITEM = gql `
@@ -15,26 +15,44 @@ const ADD_ITEM = gql `
   }
 `
 
+const FIND_GUEST = gql `
+    query{
+        findGuest {
+            id
+        }
+    }
+`
+
+
+
 
 const ProductItemSingle = (props) => {
 
     let userLoggedIn = props.loggedIn;
 
-    
-
-    // if (!userLoggedIn) {
-    //     localStorage.setItem('id', timestamp )
-    // }
-
     const [quantity, setQuantity] = useState(1);
 
     const [ addItem, { loading, error, data }] = useMutation(ADD_ITEM);
 
+    const { loading: loading_guest, error: error_guest, data: data_guest } = useQuery(FIND_GUEST, { skip: userLoggedIn } );
+
+    let id;
+
+    if (data_guest) {
+
+        id = data_guest.findGuest.id;
+
+        localStorage.setItem('guest_id', id);
+
+    } else {
+        id = null;
+    }
+
     const { product } = props;
 
-    const addItemToBasket = (productId, quantity) => {
+    const addItemToBasket = (productId, quantity, id ) => {
 
-        addItem({ variables: { productId, quantity }})
+        addItem({ variables: { productId, quantity, id }})
     
     }
 

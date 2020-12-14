@@ -68,6 +68,11 @@ const resolvers = {
         return user;
 
       },
+      findGuest: async(parent, args, context, info) => {
+        const [ guest ] = await database('basket_table').where({ user_id: null })
+
+        return guest
+      },
       basket: async ( root, { id }, context, info ) => {
 
         const user_id = context.user.userId;
@@ -135,29 +140,53 @@ const resolvers = {
       },
   
   
-      async addItemToBasket(root, { productId, quantity  }, context) {
+      async addItemToBasket(root, { productId, quantity, id  }, context) {
 
-        const user_id = context.user.userId;
+        console.log(id)
+
+        let basket_id;
 
         let existing_basket;
 
         let new_basket;
 
-        let basket_id;
+        let guest_basket;
+
+        let user_id;
+
+        if (!context.user) {
+
+          if(id) {
+            [ guest_basket ] = await database('basket_table').where({ id: id }, [ 'id' ])
+          } else {
+            [ guest_basket ] = await database('basket_table').insert({ }, [ 'id' ])
+          }
+
+
+          basket_id = guest_basket.id;
+
+        }
+
+        if (context.user) {
+
+          user_id = context.user.userId;
+
+        }
 
         if (user_id) {
           [ existing_basket ] = await database('basket_table').where({ user_id: user_id})
 
-          basket_id = existing_basket.id
+          basket_id = existing_basket.id;
 
          if (!existing_basket) {
           [ new_basket ] = await database('basket_table').insert({ user_id: user_id }, [ 'id' ])
 
-          basket_id = new_basket.id
+          basket_id = new_basket.id;
 
          }
   
         }
+
 
         // status string on basket_table
 
@@ -171,10 +200,6 @@ const resolvers = {
     
       },
       async removeItemFromBasket(root, { id }, context, info) {
-
-        console.log(id)
-
-        const user_id = context.user.userId;
 
         await database('basket_item_table').where({ id: id }).del()
 
