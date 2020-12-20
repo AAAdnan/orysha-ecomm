@@ -20,12 +20,13 @@ const LoginForm = ({ loggedIn, ...props }) => {
   const[ login, { data, loading, error }] = useMutation(LOGIN)
 
 
-
   if(data) {
     
     let inMemoryToken = data.loginUser.token
 
     console.log(inMemoryToken)
+
+    localStorage.removeItem('guest_id')
 
     setCookie({}, 'token', inMemoryToken, {
       maxAge: 30 * 24 * 60 * 60

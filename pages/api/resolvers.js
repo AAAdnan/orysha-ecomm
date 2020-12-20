@@ -68,24 +68,27 @@ const resolvers = {
         return user;
 
       },
-      findGuest: async(parent, args, context, info) => {
-        const [ guest ] = await database('basket_table').where({ user_id: null })
+      basket: async ( root , { id } , context, info ) => {
 
-        return guest
-      },
-      basket: async ( root, { id }, context, info ) => {
+        let user_id, basket_id;
 
-        const user_id = context.user.userId;
+        if (context.user) {
+          user_id = context.user.userId;
+        }
 
-        const [ { id: basket_id }] = await database('basket_table').where( { user_id })
-
+        if(!id) {
+          [{ id: basket_id }] = await database('basket_table').where({ user_id })
+        } else {
+          basket_id = id;
+        }
+        
         const basket_items = await database('basket_item_table').join('products', 'products.id', 'basket_item_table.product_id').select('product_id', 'basket_item_table.id', 'image', 'basket_quantity','price', 'name', 'description').where({ basket_table_id: basket_id })
 
         let quantity = basket_items.reduce((a, {basket_quantity}) => a + basket_quantity, 0);
 
         let sum = basket_items.map(p => p.price * p.basket_quantity).reduce((a,b) => a + b)
 
-        return { id : id || basket_id, items: basket_items , quantity: quantity, cost: sum }
+        return { basket_id, items: basket_items , quantity: quantity, cost: sum }
 
       },
     },
@@ -142,8 +145,6 @@ const resolvers = {
   
       async addItemToBasket(root, { productId, quantity, id  }, context) {
 
-        console.log(id)
-
         let basket_id;
 
         let existing_basket;
@@ -162,8 +163,9 @@ const resolvers = {
             [ guest_basket ] = await database('basket_table').insert({ }, [ 'id' ])
           }
 
-
           basket_id = guest_basket.id;
+
+          console.log(basket_id)
 
         }
 
@@ -187,23 +189,24 @@ const resolvers = {
   
         }
 
-
-        // status string on basket_table
-
         const [ basket_item ] = await database('basket_item_table').insert({ basket_quantity: quantity, product_id: productId, basket_table_id: basket_id }, ['basket_quantity', 'product_id', 'basket_table_id'])
-
-        //client sdk stripe API
-
-        //map each item to the line item price, then reduce to do sum
     
         return { id : id || basket_id, items: [basket_item], cost: 0 }
     
       },
+      async changeItemQuantityBasket(root, { id, direction }, context, info){
+
+        if(direction='add') {
+          await database('basket_item_table').where({ id }).increment({ basket_quantity: 1 })
+        }
+        else {
+          await database('basket_item_table').where({ id }).decrement({ basket_quantity: 1 })
+        }
+
+      },
       async removeItemFromBasket(root, { id }, context, info) {
 
         await database('basket_item_table').where({ id: id }).del()
-
-        return ('item deleted')
 
       },
       async signUpUser( root, { name, email, password }, info) {

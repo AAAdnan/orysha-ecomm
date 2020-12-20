@@ -5,6 +5,7 @@ import { ApolloProvider } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import cookieCutter from 'cookie-cutter'
+import { persistCache } from 'apollo-cache-persist';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
 import '@fortawesome/fontawesome-free/js/fontawesome';
@@ -16,23 +17,27 @@ const httpLink = new HttpLink({
   uri: 'http://localhost:3000/api/graphql',
 });
 
-let token;
+let token, guestId;
  
 const authLink = setContext((_, { headers }) => {
   if (typeof window !=='undefined') {
       token = cookieCutter.get('token');
+      guestId = localStorage.getItem('guest_id');
   }
   return {
     headers: {
       ...headers,
+
       Authorization: token ? `Bearer ${token}` : "",
     }
   }
 });
 
+const cache = new InMemoryCache();
+
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
+  cache,
   fetchOptions: {
     credentials: "include"
   }

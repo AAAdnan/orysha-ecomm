@@ -1,12 +1,12 @@
 import Link from 'next/Link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { gql, useQuery, useMutation } from '@apollo/client';
 
 
 const ADD_ITEM = gql `
-  mutation($productId:String!, $quantity:Int) {
-    addItemToBasket(productId: $productId, quantity: $quantity) {
-      items {
+  mutation($productId:String!, $quantity:Int, $id:String) {
+    addItemToBasket(productId: $productId, quantity: $quantity, id: $id) {
+      id, items {
           product {
               name
           }
@@ -15,47 +15,41 @@ const ADD_ITEM = gql `
   }
 `
 
-const FIND_GUEST = gql `
-    query{
-        findGuest {
-            id
-        }
-    }
-`
-
-
-
-
 const ProductItemSingle = (props) => {
-
-    let userLoggedIn = props.loggedIn;
 
     const [quantity, setQuantity] = useState(1);
 
     const [ addItem, { loading, error, data }] = useMutation(ADD_ITEM);
 
-    const { loading: loading_guest, error: error_guest, data: data_guest } = useQuery(FIND_GUEST, { skip: userLoggedIn } );
+    let guest_id, id;
 
-    let id;
-
-    if (data_guest) {
-
-        id = data_guest.findGuest.id;
-
-        localStorage.setItem('guest_id', id);
-
-    } else {
-        id = null;
+    if (typeof window !== 'undefined' && !data ) {
+        guest_id = localStorage.getItem('guest_id')
     }
+
+    if (guest_id) {
+        id = guest_id
+    } else {
+        if (data) {
+            id = data.addItemToBasket.id
+        }
+    }
+
+
+    useEffect(() => {
+        if(id) {
+            localStorage.setItem('guest_id', id)    
+        }
+    }, [id])
+
 
     const { product } = props;
 
-    const addItemToBasket = (productId, quantity, id ) => {
+    const addItemToBasket = (productId, quantity, id) => {
 
         addItem({ variables: { productId, quantity, id }})
     
     }
-
     
     return(
         <div className="py-6">
@@ -76,7 +70,7 @@ const ProductItemSingle = (props) => {
                 </div>
                 <p className="mt-2 mb-4 text-black text-sm">{ product.description }</p>
                     <div className="flex row justify-around">
-                        <button onClick={() => addItemToBasket(product.id, quantity)} className="px-3 py-6 mt-8 bg-black hover:bg-black text-white hover:text-orange-600 text-xs font-bold uppercase rounded">Add to Cart</button>
+                        <button onClick={() => addItemToBasket(product.id, quantity, id)} className="px-3 py-6 mt-8 bg-black hover:bg-black text-white hover:text-orange-600 text-xs font-bold uppercase rounded">Add to Cart</button>
                         <Link href="/store">
                             <a>
                                 <button className="px-3 py-6 mt-8 bg-black hover:bg-black text-white hover:text-orange-600 text-xs font-bold uppercase rounded">Return to store</button>

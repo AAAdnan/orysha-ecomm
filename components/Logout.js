@@ -9,7 +9,9 @@ const logout = () => {
 
     localStorage.removeItem('authToken');
 
-    destroyCookie(null, 'token')
+    localStorage.removeItem('guest_id')
+
+    destroyCookie({}, 'token')
 
     Router.push('/')
 

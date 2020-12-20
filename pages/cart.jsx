@@ -2,11 +2,9 @@ import React from "react";
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import Head from "next/head";
 import Nav from '../components/Nav';
-import Footer from '../components/Footer';
 import Link from 'next/link'
 import { gql, useQuery, useMutation } from '@apollo/client';
-import Router from 'next/router'
-
+import { removeConnectionDirectiveFromDocument } from "@apollo/client/utilities";
 
 export const getServerSideProps = async ctx => {
 
@@ -31,21 +29,38 @@ const GET_BASKET = gql `
 
 const REMOVE_ITEM = gql `
   mutation($id: ID) {
-    removeItemFromBasket(id: $id){
+    removeItemFromBasket(id: $id) {
       id
     }
   }
 `
 
+const CHANGE_QUANTITY = gql `
+  mutation($id:ID, $direction: String) {
+    changeItemQuantityBasket(id: $id, direction: $direction) {
+      basket_quantity
+    }
+  }
 
-const CartQuery = (props) => {
-
-  const { data, error, loading, fetchMore } = useQuery(GET_BASKET);
-
-  const [ removeItem, { loading: loadingRemoveItem , error: errorRemoveItem , data: dataRemoveItem }] = useMutation(REMOVE_ITEM);
+`
 
 
+const CartQuery = (props) => { 
 
+  let guest_basket_id;
+
+  if (typeof window !== 'undefined') {
+    guest_basket_id = localStorage.getItem('guest_id')
+  }
+
+
+  const { data, error, loading, fetchMore } = useQuery(GET_BASKET, { 
+    variables: { id: guest_basket_id }
+   });
+
+  const [ removeItem, { loading: loadingRemoveItem , error: errorRemoveItem , data: dataRemoveItem }] = useMutation(REMOVE_ITEM)
+
+  const [ changeItem, {  data: dataChangeItem }] = useMutation(CHANGE_QUANTITY)
 
   let quantity, cost, items;
 
@@ -61,14 +76,22 @@ const CartQuery = (props) => {
     items = [];
   }
 
+  const changeItemQuantity = (id, direction) => {
+    
+    changeItem({
+      variables: { id, direction},
+      refetchQueries: [{ query: GET_BASKET, variables: { id: guest_basket_id }} ]
+    })
+
+  }
+
   const removeItemFromBasket = (id) => {
 
-    removeItem({ variables: { id }})
+    removeItem({ 
+      variables: { id },
+      refetchQueries: [{ query: GET_BASKET, variables: { id: guest_basket_id }} ]
+    })
 
-    if(!errorRemoveItem) {
-      Router.reload()
-    }
-  
   }
 
   return(
@@ -79,7 +102,7 @@ const CartQuery = (props) => {
     </Head>
     <Nav loggedIn={props.loggedIn}/>
     <div className="container mx-auto mt-10">
-      <CartList items={items} removeItem={removeItemFromBasket} quantity={quantity} cost={cost} />
+      <CartList items={items} changeItemQuantity={changeItemQuantity} removeItem={removeItemFromBasket} quantity={quantity} cost={cost} />
     </div>
   </>
   )
@@ -88,8 +111,7 @@ const CartQuery = (props) => {
 
 const CartList = (props) => {
 
-  const { items, quantity, cost, removeItem } = props;
-
+  const { items, quantity, cost, removeItem, changeItemQuantity } = props;
 
   return (
     <>
@@ -114,21 +136,20 @@ const CartList = (props) => {
                   <div className="flex flex-col justify-between ml-4 flex-grow">
                     <span className="font-bold text-sm">{name}</span>
                     <span className="text-red-500 text-xs">{description}</span>
-                    <a onClick={ () => removeItem(id) } className="font-semibold hover:text-red-500 text-gray-500 text-xs cursor-pointer">Remove</a>
+                    <a onClick={ () => removeItem(id)} className="font-semibold hover:text-red-500 text-gray-500 text-xs cursor-pointer">Remove</a>
                   </div>
                </div>
                <div className="flex justify-center w-1/5">
-                 <svg className="fill-current text-gray-600 w-3" viewBox="0 0 448 512"><path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/>
+                 <svg onClick={ () => changeItemQuantity(id, 'minus')} className="fill-current text-gray-600 w-3 cursor-pointer"  viewBox="0 0 448 512"><path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/>
                  </svg>
-     
                  <input className="mx-2 border text-center w-8" type="text" value={basket_quantity} placeholder="1"/>
      
-                 <svg className="fill-current text-gray-600 w-3" viewBox="0 0 448 512">
+                 <svg onClick={ () => changeItemQuantity(id, 'add')} className="fill-current text-gray-600 w-3 cursor-pointer" viewBox="0 0 448 512">
                    <path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/>
                  </svg>
                </div>
                <span className="text-center w-1/5 font-semibold text-sm">${price}</span>
-               <span className="text-center w-1/5 font-semibold text-sm">$</span>
+               <span className="text-center w-1/5 font-semibold text-sm">${price * basket_quantity}</span>
              </div>
            ))}
            <Link href="/store">

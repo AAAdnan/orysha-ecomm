@@ -15,9 +15,9 @@ export const getServerSideProps = async ctx => {
 
   console.log(cookies)
 
-  if(!cookies) return { props: { loggedIn: false } }
+  if(!cookies.token) return { props: { loggedIn: false } }
 
-  if(cookies) return { props: { loggedIn: true } }
+  if(cookies.token) return { props: { loggedIn: true } }
   
 }
 
