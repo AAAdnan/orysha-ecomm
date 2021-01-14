@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 import database from '../../database/knex';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import  { toCursorHash, fromCursorHash } from './cursorHash'
+import { stripe } from './stripe'
 
 const resolvers = {
     Query: {
@@ -84,11 +85,14 @@ const resolvers = {
         
         const basket_items = await database('basket_item_table').join('products', 'products.id', 'basket_item_table.product_id').select('product_id', 'basket_item_table.id', 'image', 'basket_quantity','price', 'name', 'description').where({ basket_table_id: basket_id })
 
-        let quantity = basket_items.reduce((a, {basket_quantity}) => a + basket_quantity, 0);
+        let quantity
+
+
+        const[ { status } ] = await database('basket_table').where({ id: basket_id })
 
         let sum = basket_items.map(p => p.price * p.basket_quantity).reduce((a,b) => a + b)
 
-        return { basket_id, items: basket_items , quantity: quantity, cost: sum }
+        return { id: basket_id, items: basket_items , quantity: quantity, cost: sum, status }
 
       },
     },
@@ -124,7 +128,6 @@ const resolvers = {
   
        
       },
-  
       async deleteProduct(root, { id }, context, info){
   
         if (!context.user || context.user.role === 'buyer') return 'not allowed to delete products';
@@ -141,21 +144,26 @@ const resolvers = {
         console.log('Success')
   
       },
-  
-  
       async addItemToBasket(root, { productId, quantity, id  }, context) {
 
         let basket_id;
 
-        let existing_basket;
+        if (context.user && context.user.userId) {
 
-        let new_basket;
+          const user_id = context.user.userId;
 
-        let guest_basket;
+          let [ existing_basket ] = await database('basket_table').where({ user_id: user_id})
 
-        let user_id;
+          if (!existing_basket) {
+            [ existing_basket ] = await database('basket_table').insert({ user_id: user_id }, [ 'id' ])
+  
+           }
 
-        if (!context.user) {
+           basket_id = existing_basket.id;
+
+        } else {
+
+          let guest_basket;
 
           if(id) {
             [ guest_basket ] = await database('basket_table').where({ id: id }, [ 'id' ])
@@ -165,48 +173,58 @@ const resolvers = {
 
           basket_id = guest_basket.id;
 
-          console.log(basket_id)
-
         }
 
-        if (context.user) {
+        await database('basket_item_table').insert({ basket_quantity: quantity, product_id: productId, basket_table_id: basket_id }, ['basket_quantity', 'product_id', 'basket_table_id'])
 
-          user_id = context.user.userId;
+        const basket_items = await database('basket_item_table').join('products', 'products.id', 'basket_item_table.product_id').select('product_id', 'basket_item_table.id', 'image', 'basket_quantity','price', 'name', 'description').where({ basket_table_id: basket_id })
 
-        }
+        let sum = basket_items.map(p => p.price * p.basket_quantity).reduce((a,b) => a + b)
 
-        if (user_id) {
-          [ existing_basket ] = await database('basket_table').where({ user_id: user_id})
-
-          basket_id = existing_basket.id;
-
-         if (!existing_basket) {
-          [ new_basket ] = await database('basket_table').insert({ user_id: user_id }, [ 'id' ])
-
-          basket_id = new_basket.id;
-
-         }
-  
-        }
-
-        const [ basket_item ] = await database('basket_item_table').insert({ basket_quantity: quantity, product_id: productId, basket_table_id: basket_id }, ['basket_quantity', 'product_id', 'basket_table_id'])
-    
-        return { id : id || basket_id, items: [basket_item], cost: 0 }
+        return { id : id || basket_id, items: basket_items, cost: sum }
     
       },
-      async changeItemQuantityBasket(root, { id, direction }, context, info){
+      async updateBasketItem(root, { id, operation }, context, info){
 
-        if(direction='add') {
-          await database('basket_item_table').where({ id }).increment({ basket_quantity: 1 })
-        }
-        else {
-          await database('basket_item_table').where({ id }).decrement({ basket_quantity: 1 })
+        console.log(operation)
+
+        switch(operation){
+          case 'INCREMENT':
+            console.log('order updated')
+            await database('basket_item_table').where({ id }).increment({ basket_quantity: 1 })
+            break;
+          case 'DECREMENT':
+            await database('basket_item_table').where({ id }).decrement({ basket_quantity: 1 })
+            break;
+          case 'RESET':
+            await database('basket_item_table').where({ id }).update({ basket_quantity: 1 })
+          case 'REMOVE':
+            await database('basket_item_table').where({ id }).del()
         }
 
       },
-      async removeItemFromBasket(root, { id }, context, info) {
+      async checkoutBasket(root , { id, token } , context, info) {
 
-        await database('basket_item_table').where({ id: id }).del()
+        const basket_items = await database('basket_item_table').join('products', 'products.id', 'basket_item_table.product_id').select('product_id', 'basket_item_table.id', 'image', 'basket_quantity','price', 'name', 'description').where({ basket_table_id: id })
+
+        let sum = (basket_items.map(p => p.price * p.basket_quantity).reduce((a,b) => a + b)*100)
+
+        const charge = await stripe.charges.create({ 
+          amount: sum,
+          currency: 'usd',
+          description: 'Purchased: ',
+          source: token,
+        })
+
+        if (charge) {
+
+          await database('basket_table').where({ id }).update({ chargeID: charge.id, status: 'completed', date: charge.created })
+
+        }
+
+        return {
+          orderId: charge.id
+        }
 
       },
       async signUpUser( root, { name, email, password }, info) {

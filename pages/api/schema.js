@@ -36,7 +36,10 @@ const typeDefs = gql`
         user: User,
         quantity: Int,
         items: [BasketItem],
+        status: String,
         cost: Int
+        chargeId: String
+        date: Int
     }
     type BasketItem {
         id: ID,
@@ -46,26 +49,35 @@ const typeDefs = gql`
         description: String,
         size: Int,
         image: String,
-        price: Int
+        price: Int,
+    }
+    type Order {
+        orderId: String!
     }
     type Query {
         products(pageSize: Int, cursor: String, name:String, gender:String, id: Int ): ProductConnection!
         findUser: User
         findGuest: Basket
         users: [User]
-        basket(id: ID, user: Int, cost: Int, quantity: Int): Basket
+        basket(id: ID, user: Int, cost: Int, quantity: Int, status: String): Basket
+        order(id: ID): Basket
+    }
+    enum BasketItemOperations {
+        INCREMENT, DECREMENT, RESET, REMOVE
     }
     type Mutation {
         updateProduct(id: Int!, name: String!, description: String, price: String, size: String): Product
         addProduct(name: String!, description: String!, price: String!, size: String!, image: String!, gender: String!): Product
         deleteProduct(id: Int!): Product
         addItemToBasket(productId:String!, quantity: Int, id: String ): Basket
-        changeItemQuantityBasket(id:ID, direction: String): BasketItem
+        changeItemQuantityBasket(id:ID, direction: Boolean): BasketItem
+        updateBasketItem(id:ID!, operation: BasketItemOperations! ): BasketItem
         removeItemFromBasket(id:ID): BasketItem
         signUpUser(email:String!, password: String!, name: String! ): AuthPayload
         loginUser(email: String!, password: String! ): AuthPayload
+        checkoutBasket(id: ID, token: String!) : Order
     }
-`;
+`
 
 module.exports = typeDefs;
 
