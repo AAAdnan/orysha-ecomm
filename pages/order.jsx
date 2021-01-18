@@ -16,25 +16,17 @@ export const getServerSideProps = async ctx => {
   
 }
 
-const GET_BASKET = gql `
-    query($id: ID, $user: Int, $cost: Int, $quantity: Int) {
-      basket(id: $id, user: $user, cost: $cost, quantity: $quantity) {
-        id, status, quantity, cost, items {
+const GET_ORDER = gql `
+    query($id: ID) {
+      order(id: $id) {
+        id, status, quantity, cost, date, items, {
           name, description, image, size, price, basket_quantity, id
       }
     }
   }
 `
 
-const UPDATE_BASKET = gql `
-  mutation($id:ID!, $operation: BasketItemOperations!) {
-    updateBasketItem(id: $id, operation: $operation) {
-      basket_quantity
-    }
-  }
-`
-
-const CartQuery = (props) => { 
+const OrderQuery = (props) => { 
 
   let guest_basket_id;
 
@@ -43,37 +35,29 @@ const CartQuery = (props) => {
   }
 
 
-  const { data, error, loading, fetchMore } = useQuery(GET_BASKET, { 
+  const { data, error, loading, fetchMore } = useQuery(GET_ORDER, { 
     variables: { id: guest_basket_id }
    });
+  
 
-  const [ updateBasketItem, {  data: dataChangeItem }] = useMutation(UPDATE_BASKET)
+   console.log(data)
 
-  let basket_id, quantity, cost, items;
 
-  if (data && data.basket) {
+  let basket_id, quantity, cost, items, date;
 
-    quantity = data.basket.quantity
+  if (data && data.order) {
 
-    cost = data.basket.cost
+    cost = data.order.cost
 
-    items = data.basket.items
+    items = data.order.items
 
-    basket_id = data.basket.id
+    basket_id = data.order.id
+
+    date = data.order.date
 
   } else {
     items = [];
   }
-
-  const updateBasket = (id, operation) => {
-    
-    updateBasketItem({
-      variables: { id, operation},
-      refetchQueries: [{ query: GET_BASKET, variables: { id: guest_basket_id }} ]
-    })
-
-  }
-
 
 
 
@@ -85,7 +69,7 @@ const CartQuery = (props) => {
     </Head>
     <Nav loggedIn={props.loggedIn}/>
     <div className="container mx-auto mt-10">
-      <CartList items={items} updateBasket={updateBasket} basket_id={basket_id} quantity={quantity} cost={cost} />
+      <CartList items={items}  basket_id={basket_id} date={date} cost={cost} />
     </div>
   </>
   )
@@ -93,10 +77,8 @@ const CartQuery = (props) => {
 
 const CartList = (props) => {
 
-  const { items, quantity, cost, updateBasket, checkoutBasketClick, basket_id } = props;
+  const { items, quantity, cost, basket_id, date } = props;
   
-  console.log(basket_id)
-
   return (
     <>
     <div className="flex shadow-md my-10">
@@ -123,9 +105,10 @@ const CartList = (props) => {
                   </div>
                </div>
                <div className="flex justify-center w-1/5">
-                 <input className="mx-2 border text-center w-8" type="text" value={basket_quantity} placeholder="1"/>
+                 <span className="text-center w-1/5 font-semibold text-sm">${basket_quantity}</span>
                </div>
                <span className="text-center w-1/5 font-semibold text-sm">${price}</span>
+               <span className="text-center w-1/5 font-semibold text-sm">{date}</span>
                <span className="text-center w-1/5 font-semibold text-sm">${price * basket_quantity}</span>
              </div>
            ))}
@@ -141,4 +124,4 @@ const CartList = (props) => {
   )
 }
 
-export default CartQuery;
+export default OrderQuery;

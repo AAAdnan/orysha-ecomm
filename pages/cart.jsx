@@ -1,4 +1,3 @@
-import React from "react";
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import Head from "next/head";
 import Nav from '../components/Nav';

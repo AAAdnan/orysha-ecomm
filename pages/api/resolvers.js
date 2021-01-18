@@ -62,6 +62,8 @@ const resolvers = {
       },
       findUser: async( parent, args, context, info ) => {
 
+        console.log(context)
+
         const user_id = context.user.userId;
 
         const [ user ] = await database('user_table').where({ id: user_id })
@@ -87,7 +89,6 @@ const resolvers = {
 
         let quantity
 
-
         const[ { status } ] = await database('basket_table').where({ id: basket_id })
 
         let sum = basket_items.map(p => p.price * p.basket_quantity).reduce((a,b) => a + b)
@@ -95,6 +96,33 @@ const resolvers = {
         return { id: basket_id, items: basket_items , quantity: quantity, cost: sum, status }
 
       },
+      order: async ( root, { id }, context, info ) => {
+
+        let user_id, basket_id;
+
+        if (context.user) {
+          user_id = context.user.userId;
+        }
+
+        if(!id) {
+          [{ id: basket_id }] = await database('basket_table').where({ user_id })
+        } else {
+          basket_id = id;
+        }
+
+        const [ basket ] = await database('basket_table').where({ id: id })
+
+        const { date, status } = basket
+
+        const basket_items = await database('basket_item_table').join('products', 'products.id', 'basket_item_table.product_id').select('image', 'basket_quantity', 'price', 'name', 'description' ).where({ basket_table_id: basket_id })
+
+        let sum = basket_items.map(p => p.price * p.basket_quantity).reduce((a,b) => a + b)
+
+        let newDate = new Date(date)
+
+        return { id: basket_id, items: basket_items, date: newDate , status, cost: sum }
+
+      }
     },
   
     Mutation: {

@@ -32,6 +32,7 @@ const ProductItemSingle = (props) => {
     } else {
         if (data) {
             id = data.addItemToBasket.id
+            console.log(data)
         }
     }
 
