@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/Link';
+import Link from 'next/link';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import { HttpLink } from 'apollo-boost'
 import { useApolloClient, useQuery, gql } from '@apollo/client';

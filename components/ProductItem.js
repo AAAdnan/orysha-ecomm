@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Link from 'next/Link';
+import Link from 'next/link';
 import { useApolloClient } from '@apollo/client';
 import ProductSingle from "../pages/store/product/[id]";
 
