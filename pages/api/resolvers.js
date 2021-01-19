@@ -118,7 +118,7 @@ const resolvers = {
 
         let sum = basket_items.map(p => p.price * p.basket_quantity).reduce((a,b) => a + b)
 
-        let newDate = new Date(date)
+        let newDate = new Date(date).toISOString()
 
         return { id: basket_id, items: basket_items, date: newDate , status, cost: sum }
 

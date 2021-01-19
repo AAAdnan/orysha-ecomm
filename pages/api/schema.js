@@ -39,7 +39,7 @@ const typeDefs = gql`
         status: String,
         cost: Int
         chargeId: String
-        date: Int
+        date: String
     }
     type BasketItem {
         id: ID,
