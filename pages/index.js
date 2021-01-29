@@ -42,7 +42,7 @@ const Home = (props) => {
     </div>
     <section className="container mx-auto px-6 p-10">
       <h2 className="text-6xl font-bold text-center text-orange-600 mb-8">
-        Orysha Store
+        Fix Tailwind
       </h2>
       <div className="flex items-center flex-wrap mb-20">
         <div className="w-full md:w-1/2">
