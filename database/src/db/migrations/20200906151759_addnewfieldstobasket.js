@@ -9,6 +9,6 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
     return knex.schema.table('basket_item_table', function(t) {
-        t.dropColumn('');
+        t.dropColumns('product_id', 'basket_table_id');
     });
 };
