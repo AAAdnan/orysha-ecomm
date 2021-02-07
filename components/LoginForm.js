@@ -63,9 +63,9 @@ const LoginForm = ({ loggedIn, ...props }) => {
 
   return (
     <div className="container mx-auto relative mt-8 h-screen flex mb-12">
-      <img src="/africa-background.jpg" alt="background" className="z-0 bg-cover bg-center"/>
-      <div className="z-10  absolute inset-0 bg-black opacity-75 flex flex-col justify-center items-center shadow-lg">
-        <h1 className="text-3xl font-bold text-white mb-2">LOGIN</h1>
+      <img src="/africa-background.jpg" alt="background" className="z-0 bg-cover bg-center rounded-full"/>
+      <div className="z-10 absolute inset-0 bg-black opacity-75 flex flex-col justify-center items-center shadow-lg">
+        <h1 className="text-6xl font-bold text-orange-600 mb-24">Login</h1>
         <div className="w-1/2 text-center">
         <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="mt-6 rounded-md shadow-sm">
