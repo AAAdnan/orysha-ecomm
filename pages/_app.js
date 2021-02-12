@@ -8,6 +8,9 @@ import cookieCutter from 'cookie-cutter'
 import { persistCache } from 'apollo-cache-persist';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css' // Import the CSS
+config.autoAddCss = false // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 import '@fortawesome/fontawesome-free/js/fontawesome';
 import '@fortawesome/fontawesome-free/js/solid';
 import '@fortawesome/fontawesome-free/js/regular';
