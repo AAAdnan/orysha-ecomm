@@ -53,7 +53,7 @@ const NavItem = props => (
   <Link href={props.href}>
     <li>
       <a onClick={props.onClick}
-        className="px-3 py-2 flex items-center cursor-pointer text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+        className="px-3 py-2 flex items-center cursor-pointer text-xs uppercase font-bold leading-snug text-white hover:bg-orange-600"
       >
       <i className={props.font}></i><span className="ml-2 text-white">{props.text}</span>
       </a>

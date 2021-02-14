@@ -21,6 +21,8 @@ const ProductSinglePage = ( props ) => {
 
   const router = useRouter()
 
+  console.log
+
   const { query } = router
 
   const newQuery = parseInt(query.id);
@@ -45,7 +47,12 @@ const ProductSinglePage = ( props ) => {
   }
 `
 
+console.log(newQuery)
+
 const { data, error, loading, fetchMore } = useQuery(GET_PRODUCTS, { variables: { id: newQuery }} );
+
+
+console.log('this is the data ' + data)
 
 let product;
 

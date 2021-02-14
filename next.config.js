@@ -14,8 +14,6 @@ module.exports = {
                             new webpack.IgnorePlugin(/pg-query-stream/,/\/knex\//),
                             )
 
-    
-        // Important: return the modified config
         return config
       },
 }

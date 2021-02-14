@@ -50,7 +50,6 @@ const ProductQuery = (props) => {
 
   const { data, error, loading, fetchMore } = useQuery(GET_PRODUCTS, { variables: { name: router.query.name, gender: router.query.gender }} );
 
-
   let products;
 
   if(data && data.products && Array.isArray(data.products.edges) ) {
