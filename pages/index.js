@@ -46,31 +46,33 @@ const Home = (props) => {
       <h2 className="text-6xl font-bold text-center text-orange-600 mb-8">
         Orysha Store
       </h2>
-      <div className="flex items-center flex-wrap mb-20">
+      <div className="flex items-center flex-wrap mb-8">
         <div className="w-full md:w-1/2">
-          <h4 className="text-3xl text-orange-600 font-bold mb-3">Fashion</h4>
-          <p className="text-white mb-8">Embrace the power of the ancient Orysha with our range of themed clothing. 
-   
+          <h4 className="text-center text-3xl text-orange-600 font-bold mb-3">Fashion</h4>
+          <p className="text-center text-white">Embrace the power of the ancient Orysha with our range of themed clothing. 
           </p>
         </div>
         <div className="w-full md:w-1/2">
          <img className="h-64 w-full object-contain" alt="african-angel" src="/rsz_orysha_winged.jpg"></img>
         </div>
       </div>
-      <div className="flex items-center flex-wrap mb-20">
+      <div className="flex items-center flex-wrap mb-8">
         <div className="w-full md:w-1/2">
          <img className="h-64 w-full object-contain" alt="african-mask" src="/orysha_mask.jpg"></img>
         </div>
-        <div className="w-full md:w-1/2 pl-10">
-          <h4 className="text-3xl text-orange-600 font-bold mb-3">Unique</h4>
-          <p className="text-white mb-8">
-          Each Orysha represents a specific quality - strength, kindness, feminity, power. Which Orysha matches your personality?</p>
+        <div className="w-full md:w-1/2">
+          <h4 className="text-center text-3xl text-orange-600 font-bold mb-3">Unique</h4>
+          <p className="text-center text-white">
+            Each Orysha represents a specific quality - strength, kindness, feminity, power. Which Orysha matches your personality?
+          </p>
         </div>
       </div>
-      <div className="flex items-center flex-wrap mb-20">
+      <div className="flex items-center flex-wrap mb-8">
         <div className="w-full md:w-1/2">
-          <h4 className="text-3xl text-orange-600 font-bold mb-3">Taste</h4>
-          <p className="text-white mb-8">Explore our range of custom jackets, tracksuits and snapback hats now.</p>
+          <h4 className="text-center text-3xl text-orange-600 font-bold mb-3">Taste</h4>
+          <p className="text-center text-white">
+          Explore our range of custom jackets, tracksuits and snapback hats now.
+          </p>
         </div>
         <div className="w-full md:w-1/2">
          <img className="h-64 w-full object-contain" alt="african-mask" src="/rsz_orysha_woman_mask.jpg"></img>
@@ -85,20 +87,20 @@ const Home = (props) => {
         <div className="flex flex-wrap">
           <div className="w-full md:w-1/3 px-2 mb-4">
             <div className="bg-black rounded shadow py-2 border-solid border-2 border-white">
-              <p className="text-white text-base px-6 mb-5">The perfect cap - a dream match for my style. </p>
-              <p className="text-orange-600 text-xs md:text-sm px-6">John Doe</p>
+              <p className="text-white text-center text-base px-6 mb-5">The perfect cap - a dream match for my style. </p>
+              <p className="text-orange-600 text-center text-xs md:text-sm px-6">John Doe</p>
             </div>
           </div>
           <div className="w-full md:w-1/3 px-2 mb-4">
             <div className="bg-black rounded shadow py-2 border-solid border-2 border-orange-600">
-              <p className="text-white text-base px-6 mb-5">The handbags are classy and unique, all of my friends ask where I got them.</p>
-              <p className="text-orange-600 text-xs md:text-sm px-6">Jane Doe</p>
+              <p className="text-center text-white text-base px-6 mb-5">The handbags are classy and unique, all of my friends ask where I got them.</p>
+              <p className="text-center text-orange-600 text-xs md:text-sm px-6">Jane Doe</p>
             </div>
           </div>
           <div className="w-full md:w-1/3 px-2 mb-4">
             <div className="bg-black rounded shadow py-2 border-solid border-2 border-white">
-              <p className="text-white text-base px-6 mb-5">Totally unique</p>
-              <p className="text-orange-600 text-xs md:text-sm px-6">James Doe</p>
+              <p className="text-center text-white text-base px-6 mb-5">Totally unique</p>
+              <p className="text-center text-orange-600 text-xs md:text-sm px-6">James Doe</p>
             </div>
           </div>
         </div>
