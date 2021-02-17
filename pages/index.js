@@ -2,7 +2,6 @@ import React from "react";
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import Head from "next/head";
 import Nav from '../components/Nav';
-import Footer from '../components/Footer';
 import Link from 'next/link'
 import { gql, useQuery } from '@apollo/client';
 
@@ -36,7 +35,7 @@ const Home = (props) => {
           Divine products
         </h3>
         <Link href="/store">
-          <button className="bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider">
+          <button className="bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider hover:bg-orange-600">
             Pre Order
           </button>
         </Link>
@@ -121,7 +120,6 @@ const Home = (props) => {
       >
         Pre Order
       </button>
-  
       </Link>
     </div>
   </section>

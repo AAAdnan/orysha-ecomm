@@ -54,9 +54,7 @@ function MyApp({ Component, pageProps }) {
       <Component {...pageProps} />
       <Footer />
     </main>
-    
     </div>
-
   </ApolloProvider>
   )
 }

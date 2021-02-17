@@ -103,7 +103,7 @@ const ProductList = (props) => {
       <div className="flex-col">
         <div className="flex justify-center">
           <h1 className="text-6xl text-center font-bold text-white leading-normal mt-0 mb-2 ">
-            SHOP
+            STORE
           </h1>
         </div>
         <div className="flex justify-around" onClick={(event) => router.push(`/store?gender=${event.target.value}`)}>
@@ -113,7 +113,7 @@ const ProductList = (props) => {
       </div>
       <div className="container rounded bg-orange-300 mx-auto my-12 p-12">
         <div className="flex flex-col items-center">
-        <input onChange={(event) => router.push(`/store?name=${event.target.value}`)}  className="w-full h-16 px-3 rounded mb-8 focus:outline-none focus:shadow-outline text-xl px-8 shadow-lg" type="search" placeholder="Search Product" />
+        <input onChange={(event) => router.push(`/store?name=${event.target.value}`)}  className="w-full h-16 px-3 rounded mb-8 focus:outline-none focus:shadow-outline text-xl px-8 shadow-lg" type="search" placeholder="Search" />
             {products.map(({ id, name, description, price, size, image}) => (
               <
               Link 
