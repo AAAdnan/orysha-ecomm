@@ -16,51 +16,48 @@ export const getServerSideProps = async ctx => {
   
 }
 
+const GET_PRODUCTS = gql `
+    query($pageSize: Int, $cursor: String, $name:String, $gender:String, $id: Int) {
+      products(pageSize: $pageSize, cursor: $cursor, name: $name, gender: $gender, id: $id) {
+        edges {
+          node {
+            id
+            name
+            description
+            price
+            size
+            image
+          }
+        }
+        pageInfo {
+          endCursor
+        }
+      }
+    }
+`
 
-const ProductSinglePage = ( props ) => {
+
+const ProductSinglePage = (props) => {
 
   const router = useRouter()
-
-  console.log
 
   const { query } = router
 
   const newQuery = parseInt(query.id);
 
-  const GET_PRODUCTS = gql `
-  query($pageSize: Int, $cursor: String, $name: String, $gender: String, $id: Int) {
-    products(pageSize: $pageSize, cursor: $cursor, name: $name, gender: $gender, id: $id) {
-      edges {
-        node {
-          id
-          name
-          description
-          price
-          size
-          image
-        }
-      }
-      pageInfo {
-        endCursor
-      }
-    }
+  console.log(newQuery)
+
+  const { data, error, loading, fetchMore } = useQuery(GET_PRODUCTS, { variables: { id: newQuery }} );
+
+  console.log('this is the data ' + data)
+
+  let product;
+
+  if(data && data.products && Array.isArray(data.products.edges) ) {
+    product = data.products.edges.map( ( { node }) => node )[0]
+  } else {
+    product = {}
   }
-`
-
-console.log(newQuery)
-
-const { data, error, loading, fetchMore } = useQuery(GET_PRODUCTS, { variables: { id: newQuery }} );
-
-
-console.log('this is the data ' + data)
-
-let product;
-
-if(data && data.products && Array.isArray(data.products.edges) ) {
-  product = data.products.edges.map( ( { node }) => node )[0]
-} else {
-  product = {}
-}
 
     return(
         <>
