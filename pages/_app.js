@@ -17,7 +17,7 @@ import '@fortawesome/fontawesome-free/js/regular';
 import '@fortawesome/fontawesome-free/js/brands';
 
 const httpLink = new HttpLink({
-  uri: 'api/graphql',
+  uri: '/api/graphql',
 });
 
 let token, guestId;
