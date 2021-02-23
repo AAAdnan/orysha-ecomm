@@ -12,7 +12,7 @@ const ProductItem = props => {
           <div className="md:w-1/2 p-6 md:p-16">
             <img src={props.image}></img>
           </div>
-          <div className="flex flex-col items-center md:items-start md:self-center md:w-1/2 ">
+          <div className="flex flex-col items-center md:items-start md:self-center md:w-1/2">
                 <h1 className="text-black font-mono font-bold text-2xl">{ props.name }</h1>
                 <h1 className="text-black text-base mb-2">£{ props.price }</h1>
               <Link href={`store/product/${props.id}`}>

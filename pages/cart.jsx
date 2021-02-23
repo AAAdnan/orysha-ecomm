@@ -98,8 +98,8 @@ const CartList = (props) => {
 
   return (
     <>
-    <div className="flex shadow-md my-10">
-           <div className="w-3/4 bg-orange-300 px-10 py-10 rounded-lg">
+    <div className="flex flex-col md:flex-row shadow-md md:my-10">
+           <div className="sm:w-full md:w-3/4 bg-orange-300 md:px-10 py-10 rounded-lg">
             <div className="flex justify-between border-b pb-8">
               <h1 className="font-semibold text-4xl py-4">CART</h1>
               <h2 className="font-semibold text-2xl py-4">{quantity} items</h2>
@@ -112,28 +112,28 @@ const CartList = (props) => {
            </div>
            {items.map(({name, description, image, price, basket_quantity, id}) => (
                <div className="flex items-center hover:bg-gray-100 -mx-8 px-6 py-5" key={id}>
-               <div className="flex w-2/5">
-                    <div className="w-20">
-                    <img className="h-24" src={image} alt="" />
-                   </div>
-                  <div className="flex flex-col justify-between ml-4 flex-grow">
-                    <span className="font-bold text-sm">{name}</span>
-                    <span className="text-red-500 text-xs">{description}</span>
-                    <div className="flex">
-                      <a onClick={ () => updateBasket(id, 'REMOVE')} className="font-semibold hover:text-red-500 text-gray-500 text-xs cursor-pointer pr-4">Remove</a>
-                      <a onClick={ () => updateBasket(id, 'RESET')} className="font-semibold hover:text-red-500 text-gray-500 text-xs cursor-pointer">Reset</a>
+                <div className="flex w-2/5">
+                      <div className="w-20">
+                      <img className="h-24" src={image} alt="" />
                     </div>
-                  </div>
-               </div>
-               <div className="flex justify-center w-1/5">
-                 <svg onClick={ () => updateBasket(id, 'DECREMENT')} className="fill-current text-gray-600 w-3 cursor-pointer"  viewBox="0 0 448 512"><path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/>
-                 </svg>
-                 <input className="mx-2 border text-center w-8" type="text" value={basket_quantity} placeholder="1"/>
-  
-                 <svg onClick={ () => updateBasket(id, 'INCREMENT')} className="fill-current text-gray-600 w-3 cursor-pointer" viewBox="0 0 448 512">
-                   <path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/>
-                 </svg>
-               </div>
+                    <div className="flex flex-col justify-between ml-4 flex-grow">
+                      <span className="font-bold text-sm">{name}</span>
+                      <span className="text-red-500 text-xs">{description}</span>
+                      <div className="flex">
+                        <a onClick={ () => updateBasket(id, 'REMOVE')} className="font-semibold hover:text-red-500 text-gray-500 text-xs cursor-pointer pr-4">Remove</a>
+                        <a onClick={ () => updateBasket(id, 'RESET')} className="font-semibold hover:text-red-500 text-gray-500 text-xs cursor-pointer">Reset</a>
+                      </div>
+                    </div>
+                </div>
+                <div className="flex justify-center w-1/5">
+                  <svg onClick={ () => updateBasket(id, 'DECREMENT')} className="fill-current text-gray-600 w-3 cursor-pointer"  viewBox="0 0 448 512"><path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/>
+                  </svg>
+                  <input className="mx-2 border text-center w-8" type="text" value={basket_quantity} placeholder="1"/>
+    
+                  <svg onClick={ () => updateBasket(id, 'INCREMENT')} className="fill-current text-gray-600 w-3 cursor-pointer" viewBox="0 0 448 512">
+                    <path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/>
+                  </svg>
+                </div>
                <span className="text-center w-1/5 font-semibold text-sm">${price}</span>
                <span className="text-center w-1/5 font-semibold text-sm">${price * basket_quantity}</span>
              </div>
@@ -145,7 +145,7 @@ const CartList = (props) => {
                </a>
            </Link>
          </div>
-      <div id="summary" className="w-1/4 px-8">
+      <div id="summary" className="w-full mt-12 md:mt-0 md:w-1/4 md:px-8">
         <div className="bg-orange-300 p-4 rounded-lg">
          <h1 className="font-semibold text-2xl border-white border-opacity-100 pb-8 pl-6">Order Summary</h1>
         </div>

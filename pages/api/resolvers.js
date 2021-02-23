@@ -91,7 +91,7 @@ const resolvers = {
 
         const[ { status } ] = await database('basket_table').where({ id: basket_id })
 
-        let sum = basket_items.map(p => p.price * p.basket_quantity).reduce((a,b) => a + b)
+        let sum = basket_items.map(p => p.price * p.basket_quantity).reduce((a,b) => a + b, 0)
 
         return { id: basket_id, items: basket_items , quantity: quantity, cost: sum, status }
 

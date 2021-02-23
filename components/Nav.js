@@ -34,11 +34,11 @@ const Nav = (props, {fixed }) => {
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
                 <NavItem text="HOME" href="/" font="fas fa-home text-lg leading-lg text-white opacity-75"/>
                 <NavItem text="ABOUT" href="/about" font="fas fa-info text-lg leading-lg text-white opacity-75"/>
-                { !props.loggedIn && <NavItem text="LOGIN" href="/login" font="fa fa-id-badge leading-lg text-white opacity-75"/> } 
-                { !props.loggedIn && <NavItem text="SIGN UP" href="/signup" font="fa fa-id-badge leading-lg text-white opacity-75"/> }
                 { props.loggedIn && <NavItem text="PRODUCT" href="/product " font="fab fa-product-hunt text-lg leading-lg text-white opacity-75"/> }
                 <NavItem text="STORE" href="/store " font="fas fa-store text-lg leading-lg text-white opacity-75"/>
                 <NavItem text="CART" href="/cart " font="fas fa-shopping-cart text-lg leading-lg text-white opacity-75"/>
+                { !props.loggedIn && <NavItem text="LOGIN" href="/login" font="fa fa-id-badge leading-lg text-white opacity-75"/> } 
+                { !props.loggedIn && <NavItem text="SIGN UP" href="/signup" font="fa fa-id-badge leading-lg text-white opacity-75"/> }
                 { props.loggedIn && <NavItem text="SIGN OUT" href="/" onClick={() => logout()} font="fas fa-door-open text-lg leading-lg text-white opacity-75"/> }
             </ul>
           </div>

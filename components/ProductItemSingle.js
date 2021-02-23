@@ -53,12 +53,11 @@ const ProductItemSingle = (props) => {
     }
     
     return(
-        <div className="py-6">
-            <div className="flex mx-auto max-w-2xl h-1/2 border-solid border-4 border-gray-600 bg-white rounded overflow-hidden shadow-lg">
-            <div className="w-1/3 p-8">
+        <div className="flex flex-col md:flex-row md:max-w-2xl h-64 border-solid border-4 border-gray-600 bg-white rounded overflow-hidden shadow-lg">
+            <div className="md:w-1/2 p-6 md:p-16">
                 <img className="w-full object-cover" src={product.image}></img>
             </div>
-            <div className="w-2/3 p-8">
+            <div className="flex flex-col items-center md:items-start md:self-center md:w-1/2 ">
                     <h1 className="text-black font-mono font-bold text-2xl">{ product.name }</h1>
                 <h1 className="text-black text-base">£{ product.price }</h1>
                 <div className="flex justify-between mt-2">
@@ -70,8 +69,8 @@ const ProductItemSingle = (props) => {
                     </select>
                 </div>
                 <p className="mt-2 mb-4 text-black text-sm">{ product.description }</p>
-                    <div className="flex row justify-around">
-                        <button onClick={() => addItemToBasket(product.id, quantity, id)} className="px-3 py-6 mt-8 bg-black hover:bg-black text-white hover:text-orange-600 text-xs font-bold uppercase rounded">Add to Cart</button>
+                    <div className="flex row">
+                        <button onClick={() => addItemToBasket(product.id, quantity, id)} className="px-6 py-6 mt-8 bg-black hover:bg-black text-white hover:text-orange-600 text-xs font-bold uppercase rounded">Add to Cart</button>
                         <Link href="/store">
                             <a>
                                 <button className="px-3 py-6 mt-8 bg-black hover:bg-black text-white hover:text-orange-600 text-xs font-bold uppercase rounded">Return to store</button>
@@ -79,8 +78,7 @@ const ProductItemSingle = (props) => {
                         </Link>
                     </div>
             </div>
-            </div>
-        </div>    
+        </div>
     )
     
 }
