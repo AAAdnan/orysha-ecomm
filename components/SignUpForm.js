@@ -58,7 +58,7 @@ const SignUpForm = ({ loggedIn, ...props }) => {
     <div className="container relative mx-auto mt-12 mb-8 h-screen flex">
     <img src="/lion-two.jpg" alt="background" className="object-cover object-center h-screen w-full rounded-full" />
     <div className="absolute inset-0 opacity-75 bg-black flex flex-col justify-center items-center shadow-lg">
-      <h1 className="text-6xl font-bold text-orange-600 mb-24">Sign Up</h1>
+      <h1 className="text-6xl roboto font-bold text-orange-600 mb-24">Sign Up</h1>
       <div className="md:w-1/2 text-center">
       <form className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-6 rounded-md shadow-sm">
