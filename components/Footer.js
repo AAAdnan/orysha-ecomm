@@ -23,6 +23,12 @@ const Footer = () => {
                         <li className="mt-2">
                             <a href="#" className="hover:underline text-gray-600 hover:text-orange-500"><i className="fab fa-facebook-f"></i></a>
                         </li>
+                        <li className="mt-2">
+                            <a href="#" className="hover:underline text-gray-600 hover:text-orange-500"><i className="fab fa-twitter"></i></a>
+                        </li>
+                        <li className="mt-2">
+                            <a href="#" className="hover:underline text-gray-600 hover:text-orange-500"><i class="fab fa-instagram"></i></a>
+                        </li>
                     </ul>
                     </div>
                     <div className="hidden md:block w-full md:w-1/4 text-center md:text-left">
