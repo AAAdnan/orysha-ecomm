@@ -4,15 +4,19 @@ const jwt = require('jsonwebtoken');
 const typeDefs = require('../../pages/api/schema');
 const resolvers = require('../../pages/api/resolvers');
 import { parseCookies, setCookie, destroyCookie } from 'nookies';
+import { isBuffer } from 'util';
+import { isEnumType } from 'graphql';
  
 const getUser = (token) => {
 
   try{
     const tokenNew = token.replace('Bearer ', '')
 
-    const { userId, role } = jwt.verify(tokenNew, process.env.ACCESS_TOKEN_SECRET)
-  
-    return { userId, role }
+    const user = jwt.verify(tokenNew, process.env.ACCESS_TOKEN_SECRET)
+
+    console.log('this is the user', user)
+
+    return { userId: user.userId, role:  user.role }
   }
   catch(e){
     console.log(e.stack)
@@ -25,6 +29,9 @@ const getUser = (token) => {
 const context = ({ req }) => {
 
   const token = req.headers.authorization || '';
+  
+
+  console.log(token)
 
   if(token) {
 

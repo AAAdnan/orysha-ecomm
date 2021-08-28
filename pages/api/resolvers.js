@@ -35,9 +35,7 @@ const resolvers = {
         }
         
         const products = await baseQuery.limit(pageSize + 1)
-  
-        console.log('products +' + products);
-  
+    
         const nodes = products.slice( 0 , pageSize );
   
         const edges = nodes.map((node) => {
@@ -146,6 +144,8 @@ const resolvers = {
         if(context.user) {
   
           const customer_id = context.user.userId;
+
+          console.log(customer_id)
   
           const [ addProduct ] = await database('products').insert({ name, description, price, size, customer_id, image, gender}, [
             'name', 'description', 'price', 'size', 'customer_id' , 'image', 'gender' ])
@@ -266,7 +266,7 @@ const resolvers = {
         const [ user ] = await database('user_table').insert({ name, email, password: passwordHashed}, [
           'name', 'email', 'password', 'id', 'role'])
 
-        const token = jwt.sign( { userId: user.id, email: user.email, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d'})
+        const token = jwt.sign( { userId: user.id, email: user.email, role: user.role }, process.env.ACCESS_TOKEN_SECRET)
   
         return { userId: user.id, token }
       },
@@ -291,7 +291,9 @@ const resolvers = {
         }
   
   
-        const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d'} )
+        const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, process.env.ACCESS_TOKEN_SECRET)
+
+        console.log(token)
       
         return {
           token,

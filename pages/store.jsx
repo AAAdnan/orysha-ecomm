@@ -13,8 +13,6 @@ export const getServerSideProps = async ctx => {
 
   const cookies = parseCookies(ctx)
 
-  console.log(cookies)
-
   if(!cookies.token) return { props: { loggedIn: false } }
 
   if(cookies.token) return { props: { loggedIn: true } }
@@ -57,6 +55,8 @@ const ProductQuery = (props) => {
   } else {
     products = []
   }
+
+  console.log(data)
 
   useEffect(() => {
     if (!isPageBottom || !data ) return;
