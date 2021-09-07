@@ -13,10 +13,10 @@ module.exports = {
     // password: process.env.PGPASSWORD || 'yasmeen60',
     // database: process.env.PGDATABASE || 'productdb',
     process.env.DATABASE_URL,
-    ssl: {
-      require: true,
-      rejectUnauthorized: false
-    },
+    // ssl: {
+    //   require: true,
+    //   rejectUnauthorized: false
+    // },
   migrations: {
     directory: path.join(__dirname, 'src', 'db', 'migrations')
   },
